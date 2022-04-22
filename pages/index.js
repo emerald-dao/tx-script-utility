@@ -15,6 +15,7 @@ export default function Home() {
         <Transaction />
         <h1>Hello!</h1>
         <textarea>I love MaxStarka. Script code should go in here.</textarea>
+        <button>Execute Script</button>
       </main>
     </div>
   );

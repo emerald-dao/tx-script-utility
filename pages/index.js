@@ -23,6 +23,8 @@ pub fun main():Int {
 export default function Home() {
   const [monacoReady, setMonacoReady] = useState(false);
   const [code, updateCode] = useState(baseScript);
+  const [network, setNetwork] = useState('testnet');
+  const [result, setResult] = useState();
 
   useEffect(() => {
     // This is the way to setup current environment
@@ -53,14 +55,25 @@ export default function Home() {
           onClick={async () => {
             const [result, executionError] = await executeScript({ code });
             if (!executionError) {
-              console.log(result);
+              setResult(result);
             } else {
-              console.error(executionError);
+              setResult(executionError);
+              console.log(executionError)
             }
           }}
         >
           Execute Script
         </button>
+        <button onClick={() => {
+          if (network === 'testnet') {
+            setEnvironment('mainnet');
+            setNetwork('mainnet');
+          } else if (network === 'mainnet') {
+            setEnvironment('testnet');
+            setNetwork('testnet');
+          }
+        }}>{network}</button>
+        <h1>{result !== undefined && result !== null ? JSON.stringify(result) : null}</h1>
       </main>
     </div>
   );

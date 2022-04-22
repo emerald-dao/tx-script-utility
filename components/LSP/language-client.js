@@ -1,13 +1,11 @@
 import { CADENCE_LANGUAGE_ID } from "../CadenceEditor/cadence";
 import { createMessageConnection, Disposable } from "vscode-jsonrpc";
-import dynamic from "next/dynamic";
-const mls = dynamic(
-  dynamic(() => import("monaco-languageclient"), {
-    ssr: false,
-  })
-);
-const { createConnection, CloseAction, ErrorAction, MonacoLanguageClient } =
-  mls;
+import {
+  createConnection,
+  CloseAction,
+  ErrorAction,
+  MonacoLanguageClient,
+} from "monaco-languageclient";
 
 export function createCadenceLanguageClient(callbacks) {
   const logger = {

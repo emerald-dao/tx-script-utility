@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import configureCadence from "./cadence";
 import dynamic from "next/dynamic";
 

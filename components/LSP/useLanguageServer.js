@@ -1,11 +1,9 @@
 import { useState, useEffect } from "react";
-import { CadenceLanguageServer } from "./language-server";
-import dynamic from "next/dynamic";
-
-const services = dynamic(dynamic(() => import("monaco-languageclient/lib/monaco-services"), {
-  ssr: false,
-}))
+import { monaco } from "react-monaco-editor";
 import { MonacoServices } from "monaco-languageclient/lib/monaco-services";
+
+import { CadenceLanguageServer } from "./language-server";
+import { createCadenceLanguageClient } from "./language-client";
 
 let monacoServicesInstalled = false;
 
@@ -90,12 +88,12 @@ export default function useLanguageServer() {
 
     console.log("Installing monaco services");
     if (!monacoServicesInstalled) {
-      services.MonacoServices.install(monaco);
+      MonacoServices.install(monaco);
       monacoServicesInstalled = true;
     }
 
     restartServer();
-  },[]);
+  }, []);
 
   useEffect(() => {
     if (!languageClient && window) {

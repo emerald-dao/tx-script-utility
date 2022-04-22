@@ -4,6 +4,7 @@ import Transaction from "../components/Transaction";
 import "../flow/config.js";
 import CadenceEditor from "../components/CadenceEditor";
 import { setEnvironment, executeScript } from "flow-cadut";
+// import CadenceChecker from "../components/LSP/CadenceChecker";
 
 const baseScript = `
 // This is the most basic script you can execute on Flow Network
@@ -38,6 +39,10 @@ export default function Home() {
           code={code}
           updateCode={updateCode}
         />
+        {/*        {typeof window !== "undefined" && (
+          <CadenceChecker>
+          </CadenceChecker>
+        )}*/}
         <button
           onClick={async () => {
             const [result, executionError] = await executeScript({ code });

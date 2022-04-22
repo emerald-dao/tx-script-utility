@@ -1,6 +1,6 @@
 import Head from "next/head";
-import Landing from "../components/Landing";
 import Transaction from "../components/Transaction";
+import "../flow/config.js";
 
 export default function Home() {
   return (
@@ -13,9 +13,8 @@ export default function Home() {
 
       <main>
         <Transaction />
-        <div className="grid">
-          <Landing />
-        </div>
+        <h1>Hello!</h1>
+        <textarea>I love MaxStarka</textarea>
       </main>
     </div>
   );

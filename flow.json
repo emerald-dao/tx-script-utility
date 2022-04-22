@@ -5,9 +5,7 @@
 			"serviceAccount": "emulator-account"
 		}
 	},
-	"contracts": {
-      "Profile":  "./cadence/contracts/Profile.cdc"
-    },
+	"contracts": {},
 	"networks": {
 		"emulator": "127.0.0.1:3569",
 		"mainnet": "access.mainnet.nodes.onflow.org:9000",
@@ -19,11 +17,5 @@
 			"key": "de98b6987469c7ba3692a2eb841c75becf66c65df19a0128398a20f0e5f9c812"
 		}
 	},
-	"deployments": {
-      "emulator": {
-        "emulator-account": [
-          "Profile"
-        ]
-      }
-    }
+	"deployments": {}
 }

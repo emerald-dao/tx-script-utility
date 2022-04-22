@@ -1,7 +1,6 @@
 import "@picocss/pico";
 import "../styles/globals.css";
 import Link from "next/link";
-import AuthProvider from "../contexts/AuthContext";
 import TransactionProvider from "../contexts/TransactionContext";
 
 function MyApp({ Component, pageProps }) {
@@ -9,7 +8,7 @@ function MyApp({ Component, pageProps }) {
     <div>
       <nav className="container header">
         <ul>
-          <li>Flow Demo</li>
+          <li>Tx Script Utility</li>
         </ul>
         <ul>
           <li>
@@ -26,9 +25,7 @@ function MyApp({ Component, pageProps }) {
       </nav>
       <main className="container">
         <TransactionProvider>
-          <AuthProvider>
-            <Component {...pageProps} />
-          </AuthProvider>
+          <Component {...pageProps} />
         </TransactionProvider>
       </main>
       <footer className="container">

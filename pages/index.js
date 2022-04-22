@@ -14,7 +14,7 @@ export default function Home() {
       <main>
         <Transaction />
         <h1>Hello!</h1>
-        <textarea>I love MaxStarka</textarea>
+        <textarea>I love MaxStarka. Script code should go in here.</textarea>
       </main>
     </div>
   );

@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
-import Transaction from "../components/Transaction";
-import "../flow/config.js";
-import CadenceEditor from "../components/CadenceEditor";
+import dynamic from "next/dynamic";
 import { setEnvironment, executeScript } from "flow-cadut";
-// import CadenceChecker from "../components/LSP/CadenceChecker";
+
+import Transaction from "../components/Transaction";
+import CadenceEditor from "../components/CadenceEditor";
+
+import "../flow/config.js";
+
+const CadenceChecker = dynamic(
+  () => import("../components/LSP/CadenceChecker"),
+  { ssr: false }
+);
 
 const baseScript = `
 // This is the most basic script you can execute on Flow Network
@@ -34,15 +41,14 @@ export default function Home() {
         <Transaction />
         <h1>Cadence Editor</h1>
         {!monacoReady && <p>Please wait, instantiating Monaco Editor!</p>}
-        <CadenceEditor
-          onReady={() => setMonacoReady(true)}
-          code={code}
-          updateCode={updateCode}
-        />
-        {/*        {typeof window !== "undefined" && (
-          <CadenceChecker>
-          </CadenceChecker>
-        )}*/}
+
+        <CadenceChecker>
+          <CadenceEditor
+            onReady={() => setMonacoReady(true)}
+            code={code}
+            updateCode={updateCode}
+          />
+        </CadenceChecker>
         <button
           onClick={async () => {
             const [result, executionError] = await executeScript({ code });

@@ -2,8 +2,14 @@ import "@picocss/pico";
 import "../styles/globals.css";
 import Link from "next/link";
 import TransactionProvider from "../contexts/TransactionContext";
+import { useEffect } from "react";
 
 function MyApp({ Component, pageProps }) {
+
+  useEffect(() => {
+    console.log({pageProps})
+  }, [pageProps]);
+
   return (
     <div>
       <nav className="container header">

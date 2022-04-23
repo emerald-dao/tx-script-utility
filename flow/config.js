@@ -1,8 +1,24 @@
 import { config } from "@onflow/fcl";
 
-config({
-  "app.detail.title": "Flow Next.js Quick Start",
-  "accessNode.api": process.env.NEXT_PUBLIC_ACCESS_NODE_API,
-  "discovery.wallet": process.env.NEXT_PUBLIC_DISCOVERY_WALLET,
-  "0xProfile": process.env.NEXT_PUBLIC_CONTRACT_PROFILE, // The account address where the smart contract lives
-})
+const title = "Transaction and Script Builder"
+const testnetConfig = {
+  "app.detail.title": title,
+  "accessNode.api": 'https://access-testnet.onflow.org',
+  "discovery.wallet": 'https://fcl-discovery.onflow.org/testnet/authn'
+}
+
+const mainnetConfig = {
+  "app.detail.title": title,
+  "accessNode.api": "https://access-mainnet-beta.onflow.org",
+  "discovery.wallet": "https://fcl-discovery.onflow.org/authn",
+}
+
+config(testnetConfig)
+
+export const configureForNetwork = (network) => {
+  if(network === "testnet") {
+    config(testnetConfig)
+  } else if (network === "mainnet") {
+    config(mainnetConfig)
+  }
+}

@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import dynamic from "next/dynamic";
-import { setEnvironment, executeScript } from "flow-cadut";
+import { setEnvironment, executeScript, sendTransaction } from "flow-cadut";
 
 import Transaction from "../components/Transaction";
 import CadenceEditor from "../components/CadenceEditor";
 
+import * as fcl from "@onflow/fcl";
+
 import "../flow/config.js";
+import { configureForNetwork } from "../flow/config";
 
 const CadenceChecker = dynamic(
   () => import("../components/LSP/CadenceChecker"),
@@ -25,6 +28,36 @@ export default function Home() {
   const [code, updateCode] = useState(baseScript);
   const [network, setNetwork] = useState('testnet');
   const [result, setResult] = useState();
+
+  const txn = async () => {
+    if (!fcl.currentUser()) {
+      configureForNetwork(network)
+      await fcl.authenticate()
+    }
+    const res = await fcl.send([
+      fcl.transaction`${code}`,
+      fcl.args([]),
+      fcl.proposer(fcl.authz),
+      fcl.authorizations([fcl.authz]),
+      fcl.payer(fcl.authz),
+      fcl.limit(9999),
+    ])
+
+    console.log(res.transactionId)
+    await fcl.tx(res).onceSealed()
+    console.log('sealed!')
+  }
+
+  useEffect(() => {
+    const handleAuth = async () => {
+      if(fcl.currentUser()) {
+        await fcl.unauthenticate()
+      }
+    }
+    handleAuth().then(res => {
+      console.log('authenticated!')
+    })
+  }, [network])
 
   useEffect(() => {
     // This is the way to setup current environment
@@ -63,6 +96,22 @@ export default function Home() {
           }}
         >
           Execute Script
+        </button>
+        <button
+          onClick={async () => {
+            /*
+              const { addressMap, args = [], signers = [] } = props;
+              const code = await logTemplate(addressMap);
+
+              reportMissing("arguments", args.length, 0, `log =>`);
+              reportMissing("signers", signers.length, 1, `log =>`);
+
+              return sendTransaction({code, ...props})
+             */
+            console.log(await txn())
+          }}
+        >
+          Send Transaction
         </button>
         <button onClick={() => {
           if (network === 'testnet') {

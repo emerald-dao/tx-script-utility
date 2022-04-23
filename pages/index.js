@@ -99,15 +99,6 @@ export default function Home() {
         </button>
         <button
           onClick={async () => {
-            /*
-              const { addressMap, args = [], signers = [] } = props;
-              const code = await logTemplate(addressMap);
-
-              reportMissing("arguments", args.length, 0, `log =>`);
-              reportMissing("signers", signers.length, 1, `log =>`);
-
-              return sendTransaction({code, ...props})
-             */
             console.log(await txn())
           }}
         >

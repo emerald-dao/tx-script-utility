@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import dynamic from "next/dynamic";
-import { executeScript } from "flow-cadut";
+import { executeScript, sendTransaction, getTemplateInfo } from "flow-cadut";
 
 import Transaction from "../components/Transaction";
 import CadenceEditor from "../components/CadenceEditor";
 
 import { useNetworkContext } from "../contexts/NetworkContext";
+import { buttonLabels } from "../templates/labels";
+import { baseTransaction } from "../templates/code";
 
 import * as fcl from "@onflow/fcl";
 
@@ -18,41 +20,60 @@ const CadenceChecker = dynamic(
   { ssr: false }
 );
 
-const baseScript = `
-  // This is the most basic script you can execute on Flow Network
-  pub fun main():Int {
-    return 42
+const getButtonLabel = (type, signers = 0) => {
+  if (type === "contract") {
   }
-  `.slice(1); // remove new line at the bof
 
-const baseTx = `
-  // This is the most basic transaction you can execute on Flow Network
-  transaction() {
-    prepare(signer: AuthAccount) {
-      
-    }
-    execute {
-      
-    }
+  if (signers > 1) {
+    // TODO: Implement multisig
+    return "Multisig is not Supported";
   }
-  `.slice(1); // remove new line at the bof
+  return buttonLabels[type];
+};
 
 export default function Home() {
   const [monacoReady, setMonacoReady] = useState(false);
-  const [scriptCode, updateScriptCode] = useState(baseScript);
-  const [txCode, updateTxCode] = useState(baseTx);
+  const [code, updateScriptCode] = useState(baseTransaction);
   const [result, setResult] = useState();
   const [user, setUser] = useState();
 
   const network = useNetworkContext();
 
-  const executeScriptFunc = async () => {
-    const [result, executionError] = await executeScript({ code: scriptCode });
-    if (!executionError) {
-      setResult(result);
-    } else {
-      setResult(executionError);
-      console.log(executionError);
+  const templateInfo = getTemplateInfo(code);
+  const { type, signers, args } = templateInfo;
+
+  const send = async () => {
+    switch (true) {
+      // Script Handling
+      case type === "script": {
+        const [result, executionError] = await executeScript({
+          code: code,
+        });
+        if (!executionError) {
+          setResult(result);
+        } else {
+          setResult(executionError);
+          console.log(executionError);
+        }
+        break;
+      }
+
+      // Transaction Handling
+      case type === "tx": {
+        const [txResult, executionError] = await sendTransaction({
+          code: code,
+        });
+        if (!executionError) {
+          setResult(txResult);
+        } else {
+          setResult(executionError);
+          console.log(executionError);
+        }
+        break;
+      }
+
+      default:
+        break;
     }
   };
 
@@ -79,6 +100,10 @@ export default function Home() {
     fcl.currentUser().subscribe(setUser);
   }, []);
 
+  const fclAble = signers && signers === 1 && type === "transaction";
+  const disabled =
+    type === "unknown" || type === "contract" || !monacoReady || signers > 1;
+
   return (
     <div>
       <Head>
@@ -90,26 +115,28 @@ export default function Home() {
       <main>
         <Transaction />
 
-        {!monacoReady && <p>Please wait, instantiating Monaco Editor!</p>}
+        {!monacoReady && <p>Please wait, instantiating Monaco Editor...</p>}
 
-        <div className="grid">
-          <CadenceChecker className="grid">
+        <CadenceChecker>
+          <div className="cadence-container">
             <CadenceEditor
-              onReady={() => setMonacoReady(true)}
-              code={scriptCode}
+              className={"mb-2"}
+              onReady={() => {
+                setMonacoReady(true);
+              }}
+              code={code}
               updateCode={updateScriptCode}
             />
-            <CadenceEditor
-              onReady={() => setMonacoReady(true)}
-              code={txCode}
-              updateCode={updateTxCode}
-            />
-          </CadenceChecker>
-        </div>
-        <div className="grid">
-          <button onClick={executeScriptFunc}>Execute Script</button>
-          <button onClick={sendTxFunc}>Send Transaction</button>
-        </div>
+          </div>
+        </CadenceChecker>
+
+        <button onClick={send} disabled={disabled}>
+          {getButtonLabel(type, signers)}
+        </button>
+
+        {fclAble ? (
+          <p className="note">✅ Transaction could be signed with FCL</p>
+        ) : null}
 
         <h1>
           {result !== undefined && result !== null

@@ -1,11 +1,27 @@
 import "@picocss/pico";
 import "../styles/globals.css";
-import Link from "next/link";
 import TransactionProvider from "../contexts/TransactionContext";
 import { useEffect } from "react";
+import * as fcl from "@onflow/fcl";
+import { NetworkProvider } from '../contexts/NetworkContext';
+import { configureForNetwork } from "../flow/config";
+import React, { useState } from "react";
+
 
 function MyApp({ Component, pageProps }) {
 
+  const [network, setNetwork] = useState();
+
+  const switchNetwork = async (e) => {
+    fcl.unauthenticate();
+    if (e.target.checked) {
+      configureForNetwork('mainnet');
+      setNetwork('mainnet');
+    } else {
+      configureForNetwork('testnet');
+      setNetwork('testnet');
+    }
+  }
   useEffect(() => {
     console.log({pageProps})
   }, [pageProps]);
@@ -14,24 +30,23 @@ function MyApp({ Component, pageProps }) {
     <div>
       <nav className="container header">
         <ul>
-          <li>Tx Script Utility</li>
+          <li><h1>Cadence Editor</h1></li>
         </ul>
         <ul>
           <li>
-            <Link href="/">
-              <a>Home</a>
-            </Link>
-          </li>
-          <li>
-            <Link href="/about">
-              <a>About</a>
-            </Link>
+            <label htmlFor="switch" onChange={switchNetwork}>
+              <span className="inputChange">Testnet</span> 
+              <input type="checkbox" id="switch" name="switch" role="switch"/> 
+              <span className="inputChange">Mainnet</span>
+            </label>
           </li>
         </ul>
       </nav>
       <main className="container">
         <TransactionProvider>
+          <NetworkProvider value={network}>
           <Component {...pageProps} />
+          </NetworkProvider>
         </TransactionProvider>
       </main>
       <footer className="container">

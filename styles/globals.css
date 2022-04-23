@@ -38,6 +38,7 @@
 
 button {
   font-weight: bold;
+  border-radius:0px;
 }
 
 h1, h2, gh3 {
@@ -94,4 +95,8 @@ footer {
 
 footer.container {
   margin-top:5em;
+}
+
+.inputChange {
+  margin:0px 10px;
 }

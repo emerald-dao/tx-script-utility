@@ -22,12 +22,14 @@ const CadenceChecker = dynamic(
 
 const getButtonLabel = (type, signers = 0) => {
   if (type === "contract") {
+    return "Not Supported";
   }
 
   if (signers > 1) {
     // TODO: Implement multisig
     return "Multisig is not Supported";
   }
+
   return buttonLabels[type];
 };
 
@@ -42,32 +44,39 @@ export default function Home() {
   const templateInfo = getTemplateInfo(code);
   const { type, signers, args } = templateInfo;
 
+  // Method to send transactions and scripts
   const send = async () => {
     switch (true) {
       // Script Handling
       case type === "script": {
-        const [result, executionError] = await executeScript({
+        const [result, scriptError] = await executeScript({
           code: code,
         });
-        if (!executionError) {
+        if (!scriptError) {
           setResult(result);
         } else {
-          setResult(executionError);
-          console.log(executionError);
+          setResult(scriptError);
+          console.log(scriptError);
         }
         break;
       }
 
       // Transaction Handling
-      case type === "tx": {
-        const [txResult, executionError] = await sendTransaction({
+      case type === "transaction": {
+        if (!fcl.currentUser()) {
+          configureForNetwork(network);
+          await fcl.authenticate();
+        }
+
+        const [txResult, txError] = await sendTransaction({
           code: code,
+          limit: 9999
         });
-        if (!executionError) {
+        if (!txError) {
           setResult(txResult);
         } else {
-          setResult(executionError);
-          console.log(executionError);
+          setResult(txError);
+          console.log(txError);
         }
         break;
       }
@@ -75,25 +84,6 @@ export default function Home() {
       default:
         break;
     }
-  };
-
-  const sendTxFunc = async () => {
-    if (!fcl.currentUser()) {
-      configureForNetwork(network);
-      await fcl.authenticate();
-    }
-    const res = await fcl.send([
-      fcl.transaction`${txCode}`,
-      fcl.args([]),
-      fcl.proposer(fcl.authz),
-      fcl.authorizations([fcl.authz]),
-      fcl.payer(fcl.authz),
-      fcl.limit(9999),
-    ]);
-
-    console.log(res.transactionId);
-    await fcl.tx(res).onceSealed();
-    console.log("sealed!");
   };
 
   useEffect(() => {

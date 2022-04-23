@@ -36,9 +36,22 @@
   --switch-checked-background-color: var(--primary);
 }
 
+body {
+  background-color: rgb(245, 245, 245);
+}
+
 button {
   font-weight: bold;
-  border-radius: 0px;
+  border-radius: 4px;
+  transition: all 0.5s ease-in-out;
+}
+
+button:disabled {
+  opacity: 0.4;
+  user-select: none;
+  cursor: not-allowed;
+  pointer-events: all !important;
+  filter: grayscale(1);
 }
 
 h1,
@@ -100,5 +113,19 @@ footer.container {
 }
 
 .inputChange {
-  margin: 0px 10px;
+  margin: 0 10px;
+}
+
+.note {
+  font-size: 0.9em;
+  color: #999;
+}
+
+.cadence-container {
+  padding: 1em;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 8px 15px rgb(0 0 0 /5%);
+  margin-bottom: 1.5em;
 }

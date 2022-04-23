@@ -1,11 +1,10 @@
-export const CADENCE_LANGUAGE_ID = "cadence"
+export const CADENCE_LANGUAGE_ID = "cadence";
 
 export default function configureCadence(monaco) {
-
   monaco.languages.register({
     id: CADENCE_LANGUAGE_ID,
     extensions: [".cdc"],
-    aliases: ["CDC", "cdc"]
+    aliases: ["CDC", "cdc"],
   });
 
   const languageDef = {
@@ -42,7 +41,7 @@ export default function configureCadence(monaco) {
       "all",
       "contract",
       "self",
-      "transaction"
+      "transaction",
     ],
 
     typeKeywords: [
@@ -73,7 +72,7 @@ export default function configureCadence(monaco) {
       "Word128",
       "Word256",
       "Fix64",
-      "UFix64"
+      "UFix64",
     ],
 
     operators: [
@@ -95,19 +94,20 @@ export default function configureCadence(monaco) {
       "??",
       ":",
       "=",
-      "@"
+      "@",
     ],
 
     // we include these common regular expressions
     symbols: /[=><!~?:&|+\-*\/\^%]+/,
-    escapes: /\\(?:[abfnrtv\\"]|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})/,
+    escapes:
+      /\\(?:[abfnrtv\\"]|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})/,
     digits: /\d+(_+\d+)*/,
     octaldigits: /[0-7]+(_+[0-7]+)*/,
     binarydigits: /[0-1]+(_+[0-1]+)*/,
     hexdigits: /[[0-9a-fA-F]+(_+[0-9a-fA-F]+)*/,
 
     tokenizer: {
-      root: [[/[{}]/, "delimiter.bracket"], {include: "common"}],
+      root: [[/[{}]/, "delimiter.bracket"], { include: "common" }],
 
       common: [
         // identifiers and keywords
@@ -117,14 +117,14 @@ export default function configureCadence(monaco) {
             cases: {
               "@typeKeywords": "keyword",
               "@keywords": "keyword",
-              "@default": "identifier"
-            }
-          }
+              "@default": "identifier",
+            },
+          },
         ],
         [/[A-Z][\w]*/, "type.identifier"], // to show class names nicely
 
         // whitespace
-        {include: "@whitespace"},
+        { include: "@whitespace" },
 
         // delimiters and operators
         [/[()\[\]]/, "@brackets"],
@@ -134,9 +134,9 @@ export default function configureCadence(monaco) {
           {
             cases: {
               "@operators": "delimiter",
-              "@default": ""
-            }
-          }
+              "@default": "",
+            },
+          },
         ],
 
         // numbers
@@ -158,24 +158,23 @@ export default function configureCadence(monaco) {
       whitespace: [
         [/[ \t\r\n]+/, ""],
         [/\/\*/, "comment", "@comment"],
-        [/\/\/.*$/, "comment"]
+        [/\/\/.*$/, "comment"],
       ],
 
       comment: [
         [/[^\/*]+/, "comment"],
         [/\*\//, "comment", "@pop"],
-        [/[\/*]/, "comment"]
+        [/[\/*]/, "comment"],
       ],
 
       string_double: [
         [/[^\\"]+/, "string"],
         [/@escapes/, "string.escape"],
         [/\\./, "string.escape.invalid"],
-        [/"/, "string", "@pop"]
+        [/"/, "string", "@pop"],
       ],
-
-    }
-  }
+    },
+  };
 
   monaco.languages.setMonarchTokensProvider(CADENCE_LANGUAGE_ID, languageDef);
 }

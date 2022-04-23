@@ -9,7 +9,9 @@ For a SvelteKit example, see my other repo: https://github.com/muttoni/fcl-svelt
 [![image](https://user-images.githubusercontent.com/27052451/146340356-e34f3c47-43bc-4c11-926b-b82b99d561c6.png)](https://fcl-sveltekit.vercel.app/)
 
 ## Running on Flow Testnet
+
 This project will run on the Flow testnet simply as:
+
 ```bash
 npm run build
 npm run start

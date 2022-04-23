@@ -3,40 +3,40 @@ import "../styles/globals.css";
 import TransactionProvider from "../contexts/TransactionContext";
 import { useEffect } from "react";
 import * as fcl from "@onflow/fcl";
-import { NetworkProvider } from '../contexts/NetworkContext';
+import { NetworkProvider } from "../contexts/NetworkContext";
 import { configureForNetwork } from "../flow/config";
 import React, { useState } from "react";
 
-
 function MyApp({ Component, pageProps }) {
-
   const [network, setNetwork] = useState();
 
   const switchNetwork = async (e) => {
     fcl.unauthenticate();
     if (e.target.checked) {
-      configureForNetwork('mainnet');
-      setNetwork('mainnet');
+      configureForNetwork("mainnet");
+      setNetwork("mainnet");
     } else {
-      configureForNetwork('testnet');
-      setNetwork('testnet');
+      configureForNetwork("testnet");
+      setNetwork("testnet");
     }
-  }
+  };
   useEffect(() => {
-    console.log({pageProps})
+    console.log({ pageProps });
   }, [pageProps]);
 
   return (
     <div>
       <nav className="container header">
         <ul>
-          <li><h1>Cadence Editor</h1></li>
+          <li>
+            <h1>Cadence Editor</h1>
+          </li>
         </ul>
         <ul>
           <li>
             <label htmlFor="switch" onChange={switchNetwork}>
-              <span className="inputChange">Testnet</span> 
-              <input type="checkbox" id="switch" name="switch" role="switch"/> 
+              <span className="inputChange">Testnet</span>
+              <input type="checkbox" id="switch" name="switch" role="switch" />
               <span className="inputChange">Mainnet</span>
             </label>
           </li>
@@ -45,7 +45,7 @@ function MyApp({ Component, pageProps }) {
       <main className="container">
         <TransactionProvider>
           <NetworkProvider value={network}>
-          <Component {...pageProps} />
+            <Component {...pageProps} />
           </NetworkProvider>
         </TransactionProvider>
       </main>

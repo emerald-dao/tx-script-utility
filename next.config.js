@@ -4,7 +4,7 @@ const withTM = nextTranspileModules(["monaco-editor", "flow-cadut"]);
 
 module.exports = withTM({
   reactStrictMode: true,
-  webpack: (config, ) => {
+  webpack: (config) => {
     config.resolve.alias["vscode"] = require.resolve(
       "monaco-languageclient/lib/vscode-compatibility"
     );

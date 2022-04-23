@@ -7,7 +7,11 @@ const MonacoEditor = dynamic(() => import("react-monaco-editor"), {
 });
 
 export default function CadenceEditor(props) {
-  const { onReady = () => console.log("Monaco Editor is ready!"), code, updateCode } = props;
+  const {
+    onReady = () => console.log("Monaco Editor is ready!"),
+    code,
+    updateCode,
+  } = props;
   return (
     <div>
       <MonacoEditor

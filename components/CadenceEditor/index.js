@@ -15,11 +15,10 @@ export default function CadenceEditor(props) {
 
   return (
     <MonacoEditor
-      editorWillMount={(monaco) => {
+      editorDidMount={(editor, monaco) => {
         configureCadence(monaco);
         onReady(monaco);
-      }}
-      editorDidMount={(editor, monaco) => {
+
         // Register event listener to resize Monaco to container
         window.addEventListener("resize", () => {
           editor.layout();

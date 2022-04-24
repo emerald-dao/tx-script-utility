@@ -17,6 +17,7 @@
     --primary-hover: #00ce78;
     --primary-focus: rgba(67, 160, 71, 0.25);
     --primary-inverse: #fff;
+    --background-color: #11191f;
   }
 }
 
@@ -73,7 +74,6 @@ h4{
 
 p{
   font-size: 16px;
-  color: #555;
 }
 
 ul{

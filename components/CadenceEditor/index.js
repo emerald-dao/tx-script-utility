@@ -12,23 +12,27 @@ export default function CadenceEditor(props) {
     code,
     updateCode,
   } = props;
+
   return (
-    <div>
-      <MonacoEditor
-        editorWillMount={(monaco) => {
-          configureCadence(monaco);
-          onReady();
-        }}
-        value={code}
-        onChange={updateCode}
-        height={300}
-        language="cadence"
-        options={{
-          minimap: {
-            enabled: false,
-          },
-        }}
-      />
-    </div>
+    <MonacoEditor
+      editorDidMount={(editor, monaco) => {
+        configureCadence(monaco);
+        onReady(monaco);
+
+        // Register event listener to resize Monaco to container
+        window.addEventListener("resize", () => {
+          editor.layout();
+        });
+      }}
+      value={code}
+      onChange={updateCode}
+      height={300}
+      language="cadence"
+      options={{
+        minimap: {
+          enabled: false,
+        },
+      }}
+    />
   );
 }

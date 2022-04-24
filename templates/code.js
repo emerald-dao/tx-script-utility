@@ -5,6 +5,14 @@ export const baseScript = `
   }
   `.slice(1); // remove new line at the bof
 
+export const flovatarTotalSupply = `
+  import Flovatar from 0x01
+  
+  pub fun main():UInt64{
+    return Flovatar.totalSupply
+  }
+`.slice(1); // remove new line at the bof
+
 export const baseTransaction = `
   // This is the most basic transaction you can execute on Flow Network
   transaction() {

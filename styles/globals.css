@@ -6,6 +6,7 @@
   --primary-hover: #00ce78;
   --primary-focus: rgba(67, 160, 71, 0.125);
   --primary-inverse: #fff;
+  --background-color: rgba(245,245,245);
 }
 
 /* Green Dark scheme (Auto) */
@@ -37,7 +38,6 @@
 }
 
 body {
-  background-color: rgb(245, 245, 245);
   min-height: 100vh;
 }
 

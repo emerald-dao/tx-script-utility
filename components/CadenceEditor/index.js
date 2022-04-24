@@ -22,7 +22,6 @@ export default function CadenceEditor(props) {
         // Register event listener to resize Monaco to container
         window.addEventListener("resize", () => {
           editor.layout();
-          console.log("layout");
         });
       }}
       value={code}

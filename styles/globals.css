@@ -38,6 +38,7 @@
 
 body {
   background-color: rgb(245, 245, 245);
+  min-height: 100vh;
 }
 
 button {
@@ -56,7 +57,30 @@ button:disabled {
 
 h1,
 h2,
-gh3 {
+h3,
+h4,
+p {
+  margin-bottom: 0;
+}
+
+h1{
+  font-size: 28px;
+}
+
+h4{
+  font-size: 20px;
+}
+
+p{
+  font-size: 16px;
+  color: #555;
+}
+
+ul{
+  padding: 0.5em 1em;
+}
+li{
+  font-size: 16px;
   margin-bottom: 0;
 }
 
@@ -83,7 +107,7 @@ main {
 }
 
 .container.header {
-  margin-bottom: 30px;
+  margin-bottom: 1em;
 }
 
 footer {
@@ -128,4 +152,10 @@ footer.container {
   overflow: hidden;
   box-shadow: 0 8px 15px rgb(0 0 0 /5%);
   margin-bottom: 1.5em;
+}
+
+.two-items-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 1em;
 }

@@ -15,6 +15,7 @@ import {
 
 import Transaction from "../components/Transaction";
 import CadenceEditor from "../components/CadenceEditor";
+import Registry from "../components/Registry";
 
 import { useNetworkContext } from "../contexts/NetworkContext";
 import { buttonLabels } from "../templates/labels";
@@ -22,7 +23,8 @@ import { baseTransaction, flovatarTotalSupply } from "../templates/code";
 
 import "../flow/config.js";
 import { configureForNetwork } from "../flow/config";
-import { debounce, fetchRegistry, prepareEnvironments,cdc } from "../utils";
+import { debounce } from "../utils";
+import { useRegistryContext } from "../components/Registry";
 
 const CadenceChecker = dynamic(
   () => import("../components/LSP/CadenceChecker"),
@@ -69,10 +71,14 @@ export default function Home() {
   const [code, updateScriptCode] = useState(flovatarTotalSupply);
   const [result, setResult] = useState();
   const [user, setUser] = useState();
-  const [registry, setRegistry] = useState(null);
   const [importList, setImportList] = useState({});
   const [finalImports, setFinalImports] = useState([]);
   const network = useNetworkContext() || "testnet";
+
+  // CONTEXTS
+  const fullRegistry = useRegistryContext();
+  console.log({ fullRegistry });
+  const { registry, fetchContract } = fullRegistry;
 
   // METHODS
   const updateImports = async () => {
@@ -83,7 +89,6 @@ export default function Home() {
   const send = async () => {
     await setEnvironment(network);
     extendEnvironment(registry);
-
     switch (true) {
       // Script Handling
       case type === "script": {
@@ -122,11 +127,15 @@ export default function Home() {
         break;
     }
   };
-  const getRegistry = async () => {
-    const data = await fetchRegistry();
-    const registry = prepareEnvironments(data);
-    extendEnvironment(registry);
-    setRegistry(registry);
+  const fetchContracts = () => {
+    if (fetchContract) {
+      const contracts = Object.keys(importList);
+      for (let i = 0; i < contracts.length; i++) {
+        const name = contracts[i];
+        console.log(i, name);
+        fetchContract(name);
+      }
+    }
   };
 
   // CONSTANTS
@@ -140,20 +149,20 @@ export default function Home() {
   useEffect(() => {
     fcl.unauthenticate();
     fcl.currentUser().subscribe(setUser);
-
-    getRegistry().then();
   }, []);
   useEffect(() => {
     setEnvironment(network);
-    if (registry !== null) {
+    if (registry) {
       extendEnvironment(registry);
     }
   }, [network]);
   useEffect(() => getImports(code, setImportList), [code]);
-  useEffect(
-    () => prepareFinalImports(importList, setFinalImports),
-    [importList, network]
-  );
+  useEffect(() => {
+    prepareFinalImports(importList, setFinalImports);
+  }, [importList, network]);
+  useEffect(() => {
+    fetchContracts();
+  }, [importList]);
 
   // RENDER
   return (

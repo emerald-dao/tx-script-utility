@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import dynamic from "next/dynamic";
+import * as fcl from "@onflow/fcl";
 import {
   executeScript,
   sendTransaction,
@@ -19,11 +20,9 @@ import { useNetworkContext } from "../contexts/NetworkContext";
 import { buttonLabels } from "../templates/labels";
 import { baseTransaction, flovatarTotalSupply } from "../templates/code";
 
-import * as fcl from "@onflow/fcl";
-
 import "../flow/config.js";
 import { configureForNetwork } from "../flow/config";
-import { debounce, fetchRegistry, prepareEnvironments } from "../utils";
+import { debounce, fetchRegistry, prepareEnvironments,cdc } from "../utils";
 
 const CadenceChecker = dynamic(
   () => import("../components/LSP/CadenceChecker"),

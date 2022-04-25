@@ -78,7 +78,7 @@ export default function Home() {
   const templateInfo = getTemplateInfo(code);
   const { type, signers, args } = templateInfo;
 
-  // METHDOS
+  // METHODS
   const updateImports = async () => {
     const env = await getEnvironment(network);
     const newCode = replaceImportAddresses(code, env);

@@ -65,6 +65,7 @@ const prepareFinalImports = async (list, setFinal) => {
 };
 
 export default function Home() {
+  // HOOKS
   const [monacoReady, setMonacoReady] = useState(false);
   const [code, updateScriptCode] = useState(flovatarTotalSupply);
   const [result, setResult] = useState();
@@ -72,11 +73,7 @@ export default function Home() {
   const [registry, setRegistry] = useState(null);
   const [importList, setImportList] = useState({});
   const [finalImports, setFinalImports] = useState([]);
-
   const network = useNetworkContext() || "testnet";
-
-  const templateInfo = getTemplateInfo(code);
-  const { type, signers, args } = templateInfo;
 
   // METHODS
   const updateImports = async () => {
@@ -133,6 +130,13 @@ export default function Home() {
     setRegistry(registry);
   };
 
+  // CONSTANTS
+  const templateInfo = getTemplateInfo(code);
+  const { type, signers, args } = templateInfo;
+  const fclAble = signers && signers === 1 && type === "transaction";
+  const disabled =
+    type === "unknown" || type === "contract" || !monacoReady || signers > 1;
+
   // EFFECTS
   useEffect(() => {
     fcl.unauthenticate();
@@ -152,10 +156,7 @@ export default function Home() {
     [importList, network]
   );
 
-  const fclAble = signers && signers === 1 && type === "transaction";
-  const disabled =
-    type === "unknown" || type === "contract" || !monacoReady || signers > 1;
-
+  // RENDER
   return (
     <div>
       <Head>

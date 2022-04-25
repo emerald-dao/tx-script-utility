@@ -4,6 +4,9 @@ import { MonacoServices } from "monaco-languageclient/lib/monaco-services";
 
 import { CadenceLanguageServer } from "./language-server";
 import { createCadenceLanguageClient } from "./language-client";
+import { useNetworkContext } from "../../contexts/NetworkContext";
+import { setEnvironment } from "flow-cadut";
+import { useRegistryContext } from "../Registry";
 
 let monacoServicesInstalled = false;
 
@@ -39,6 +42,9 @@ const launchLanguageClient = async (
 };
 
 export default function useLanguageServer() {
+  const network = useNetworkContext() || "testnet";
+  const { getContractCode } = useRegistryContext();
+
   let initialCallbacks = {
     // The actual callback will be set as soon as the language server is initialized
     toServer: null,
@@ -63,13 +69,10 @@ export default function useLanguageServer() {
   const [languageClient, setLanguageClient] = useState(null);
   const [callbacks, setCallbacks] = useState(initialCallbacks);
 
-  const getCode = (address) => {
-    // TODO: Fetch code from address.
-    /*
-      This is probably can't be implemented right now as server expects only address,
-      but not the name of the contract.
-     */
-    return "";
+  const getCode = (importStatement) => {
+    const contractName = importStatement.split(".")[1]
+    const code = getContractCode(contractName)
+    return code
   };
 
   const restartServer = () => {
@@ -85,6 +88,7 @@ export default function useLanguageServer() {
     // The Monaco Language Client services have to be installed globally, once.
     // An editor must be passed, which is only used for commands.
     // As the Cadence language server is not providing any commands this is OK
+    setEnvironment(network);
 
     console.log("Installing monaco services");
     if (!monacoServicesInstalled) {

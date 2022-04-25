@@ -51,7 +51,12 @@ export const useRegistry = () => {
   };
 
   const fetchContract = async (name, exactAddress) => {
-    const address = exactAddress || registry[network][name];
+    let address = exactAddress;
+    if (!exactAddress && registry[network]) {
+      address = exactAddress || registry[network][name];
+    } else {
+      address = "";
+    }
     console.log(name, address);
     try {
       const { contracts } = await fcl
@@ -80,6 +85,12 @@ export const useRegistry = () => {
   }, [contracts]);
 
   const getContractCode = (name) => {
+    console.log("REQUESTED ", name);
+    const contract = contracts[network][name];
+    if (!contract) {
+      console.log({contracts});
+      console.log(`%cNOT FOUND ${name}`, "color: red");
+    }
     return contracts[network][name] || "";
   };
 

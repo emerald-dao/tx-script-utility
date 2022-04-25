@@ -71,7 +71,10 @@ export default function useLanguageServer() {
 
   const getCode = (importStatement) => {
     const contractName = importStatement.split(".")[1]
-    const code = getContractCode(contractName)
+    const code = getContractCode(contractName) || ""
+    if(!code){
+      console.log(`Could not find code for ${contractName}`)
+    }
     return code
   };
 

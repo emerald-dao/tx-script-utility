@@ -10,7 +10,6 @@ pub fun main():Int {
 export const flovatarTotalSupply = cdc`
 /// pragma title Flovatar Total Supply
 import Flovatar from 0x01
-import FIND from 0x02
 
 pub fun main():UInt64{
   return Flovatar.totalSupply

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { monaco } from "react-monaco-editor";
 import { MonacoServices } from "monaco-languageclient/lib/monaco-services";
 
@@ -7,6 +7,7 @@ import { createCadenceLanguageClient } from "./language-client";
 import { useNetworkContext } from "../../contexts/NetworkContext";
 import { setEnvironment } from "flow-cadut";
 import { useRegistryContext } from "../Registry";
+import { debounce } from "../../utils";
 
 let monacoServicesInstalled = false;
 
@@ -43,7 +44,7 @@ const launchLanguageClient = async (
 
 export default function useLanguageServer() {
   const network = useNetworkContext() || "testnet";
-  const { getContractCode } = useRegistryContext();
+  const { registry, contracts, getContractCode } = useRegistryContext();
 
   let initialCallbacks = {
     // The actual callback will be set as soon as the language server is initialized
@@ -69,23 +70,38 @@ export default function useLanguageServer() {
   const [languageClient, setLanguageClient] = useState(null);
   const [callbacks, setCallbacks] = useState(initialCallbacks);
 
+  const timer = useRef(null)
+
   const getCode = (importStatement) => {
-    const contractName = importStatement.split(".")[1]
-    const code = getContractCode(contractName) || ""
-    if(!code){
-      console.log(`Could not find code for ${contractName}`)
+    const [address,contractName] = importStatement.split(".")
+    const code = getContractCode(contractName, address) || ""
+    if(code === ""){
+      console.log(`%c+++++++++++++ NOT FOUND!!!!!!!!!! ${contractName}`,"color: red")
     }
     return code
   };
 
-  const restartServer = () => {
+  const restartServer = ()=>{
     console.log("Restarting server...");
 
     startLanguageServer(callbacks, getCode, {
       setLanguageServer,
       setCallbacks,
     }).then();
-  };
+  }
+
+  const debouncedRestart = () => {
+    if(timer.current){
+      clearTimeout(timer.current);
+    }
+    timer.current = setTimeout(()=>{
+      console.log("Restart language server")
+      if(languageServer){
+        languageServer.updateCodeGetter(getCode)
+        // restartServer()
+      }
+    }, 2000);
+  }
 
   useEffect(() => {
     // The Monaco Language Client services have to be installed globally, once.
@@ -107,6 +123,12 @@ export default function useLanguageServer() {
       launchLanguageClient(callbacks, languageServer, setLanguageClient).then();
     }
   }, [languageServer]);
+
+  useEffect(()=>{
+    if(languageServer){
+      languageServer.updateCodeGetter(getCode)
+    }
+  },[registry, contracts])
 
   return {
     languageClient,

@@ -25,6 +25,7 @@ import "../flow/config.js";
 import { configureForNetwork } from "../flow/config";
 import { debounce } from "../utils";
 import { useRegistryContext } from "../components/Registry";
+import { cdc } from "@onflow/fcl";
 
 const CadenceChecker = dynamic(
   () => import("../components/LSP/CadenceChecker"),
@@ -66,6 +67,15 @@ const prepareFinalImports = async (list, setFinal) => {
 };
 
 export default function Home() {
+  const initCode = cdc`
+  //
+  import FlovatarComponent from 0x0cf264811b95d465
+  
+  pub fun main(): UInt64 {
+    return FlovatarComponent.totalSupply
+  }
+  `();
+
   // HOOKS
   const [monacoReady, setMonacoReady] = useState(false);
   const [code, updateScriptCode] = useState(flovatarTotalSupply);
@@ -77,8 +87,9 @@ export default function Home() {
 
   // CONTEXTS
   const fullRegistry = useRegistryContext();
-  console.log({ fullRegistry });
-  const { registry, fetchContract } = fullRegistry;
+  const { registry, contracts, fetchContract } = fullRegistry;
+
+  console.log({fullRegistry})
 
   // METHODS
   const updateImports = async () => {
@@ -127,12 +138,12 @@ export default function Home() {
         break;
     }
   };
+
   const fetchContracts = () => {
     if (fetchContract) {
       const contracts = Object.keys(importList);
       for (let i = 0; i < contracts.length; i++) {
         const name = contracts[i];
-        console.log(i, name);
         fetchContract(name);
       }
     }
@@ -163,6 +174,8 @@ export default function Home() {
   useEffect(() => {
     fetchContracts();
   }, [importList]);
+
+  // TODO: Refresh editor to enable recheck
 
   // RENDER
   return (

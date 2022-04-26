@@ -44,7 +44,6 @@ export const useRegistry = () => {
       const address = list[name];
       const contract = contracts[network][name];
       if (!contract) {
-        console.log("FETCH DEPENDENCY", network, name, address);
         fetchContract(name, address);
       }
     }
@@ -53,45 +52,36 @@ export const useRegistry = () => {
   const fetchContract = async (name, exactAddress) => {
     let address = exactAddress;
     if (!exactAddress && registry[network]) {
-      address = exactAddress || registry[network][name];
-    } else {
-      address = "";
+      address = registry[network][name]
     }
-    console.log(name, address);
+    if(!address){
+      return false
+    }
     try {
+      console.log("--------> ADDRESS:", {name, exactAddress, address})
       const { contracts } = await fcl
         .send([fcl.getAccount(address)])
         .then(fcl.decode);
       const code = contracts[name] || "";
-
-      console.log("get dependencies for", name);
       const dependencies = extractImports(code);
-      console.log({ dependencies });
       fetchDependencies(dependencies);
 
-      console.log("DISPATCH", name, network);
       // Update state
       dispatch({
         contracts,
         network,
       });
     } catch (e) {
-      console.warn(e);
+      console.error(e);
     }
   };
 
-  useEffect(() => {
-    console.log({ contracts });
-  }, [contracts]);
-
-  const getContractCode = (name) => {
-    console.log("REQUESTED ", name);
+  const getContractCode = (name, address) => {
     const contract = contracts[network][name];
-    if (!contract) {
-      console.log({contracts});
-      console.log(`%cNOT FOUND ${name}`, "color: red");
+    if(!contract){
+      fetchContract(name, address).then();
     }
-    return contracts[network][name] || "";
+    return contract || "";
   };
 
   return { registry, contracts, fetchContract, getContractCode };

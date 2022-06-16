@@ -6,6 +6,7 @@ import * as fcl from "@onflow/fcl";
 import { NetworkProvider } from "../contexts/NetworkContext";
 import { configureForNetwork } from "../flow/config";
 import React, { useState } from "react";
+import RegistryProvider from "../components/Registry";
 
 function MyApp({ Component, pageProps }) {
   const [network, setNetwork] = useState();
@@ -45,7 +46,9 @@ function MyApp({ Component, pageProps }) {
       <main className="container">
         <TransactionProvider>
           <NetworkProvider value={network}>
-            <Component {...pageProps} />
+            <RegistryProvider>
+              <Component {...pageProps} />
+            </RegistryProvider>
           </NetworkProvider>
         </TransactionProvider>
       </main>

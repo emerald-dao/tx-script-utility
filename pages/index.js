@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import dynamic from "next/dynamic";
+import * as fcl from "@onflow/fcl";
 import {
   executeScript,
   sendTransaction,
@@ -14,16 +15,17 @@ import {
 
 import Transaction from "../components/Transaction";
 import CadenceEditor from "../components/CadenceEditor";
+import Registry from "../components/Registry";
 
 import { useNetworkContext } from "../contexts/NetworkContext";
 import { buttonLabels } from "../templates/labels";
 import { baseTransaction, flovatarTotalSupply } from "../templates/code";
 
-import * as fcl from "@onflow/fcl";
-
 import "../flow/config.js";
 import { configureForNetwork } from "../flow/config";
-import { debounce, fetchRegistry, prepareEnvironments } from "../utils";
+import { debounce } from "../utils";
+import { useRegistryContext } from "../components/Registry";
+import { cdc } from "@onflow/fcl";
 
 const CadenceChecker = dynamic(
   () => import("../components/LSP/CadenceChecker"),
@@ -65,20 +67,31 @@ const prepareFinalImports = async (list, setFinal) => {
 };
 
 export default function Home() {
+  const initCode = cdc`
+  //
+  import FlovatarComponent from 0x0cf264811b95d465
+  
+  pub fun main(): UInt64 {
+    return FlovatarComponent.totalSupply
+  }
+  `();
+
+  // HOOKS
   const [monacoReady, setMonacoReady] = useState(false);
   const [code, updateScriptCode] = useState(flovatarTotalSupply);
   const [result, setResult] = useState();
   const [user, setUser] = useState();
-  const [registry, setRegistry] = useState(null);
   const [importList, setImportList] = useState({});
   const [finalImports, setFinalImports] = useState([]);
-
   const network = useNetworkContext() || "testnet";
 
-  const templateInfo = getTemplateInfo(code);
-  const { type, signers, args } = templateInfo;
+  // CONTEXTS
+  const fullRegistry = useRegistryContext();
+  const { registry, contracts, fetchContract } = fullRegistry;
 
-  // METHDOS
+  console.log({fullRegistry})
+
+  // METHODS
   const updateImports = async () => {
     const env = await getEnvironment(network);
     const newCode = replaceImportAddresses(code, env);
@@ -87,7 +100,6 @@ export default function Home() {
   const send = async () => {
     await setEnvironment(network);
     extendEnvironment(registry);
-
     switch (true) {
       // Script Handling
       case type === "script": {
@@ -126,36 +138,46 @@ export default function Home() {
         break;
     }
   };
-  const getRegistry = async () => {
-    const data = await fetchRegistry();
-    const registry = prepareEnvironments(data);
-    extendEnvironment(registry);
-    setRegistry(registry);
+
+  const fetchContracts = () => {
+    if (fetchContract) {
+      const contracts = Object.keys(importList);
+      for (let i = 0; i < contracts.length; i++) {
+        const name = contracts[i];
+        fetchContract(name);
+      }
+    }
   };
+
+  // CONSTANTS
+  const templateInfo = getTemplateInfo(code);
+  const { type, signers, args } = templateInfo;
+  const fclAble = signers && signers === 1 && type === "transaction";
+  const disabled =
+    type === "unknown" || type === "contract" || !monacoReady || signers > 1;
 
   // EFFECTS
   useEffect(() => {
     fcl.unauthenticate();
     fcl.currentUser().subscribe(setUser);
-
-    getRegistry().then();
   }, []);
   useEffect(() => {
     setEnvironment(network);
-    if (registry !== null) {
+    if (registry) {
       extendEnvironment(registry);
     }
   }, [network]);
   useEffect(() => getImports(code, setImportList), [code]);
-  useEffect(
-    () => prepareFinalImports(importList, setFinalImports),
-    [importList, network]
-  );
+  useEffect(() => {
+    prepareFinalImports(importList, setFinalImports);
+  }, [importList, network]);
+  useEffect(() => {
+    fetchContracts();
+  }, [importList]);
 
-  const fclAble = signers && signers === 1 && type === "transaction";
-  const disabled =
-    type === "unknown" || type === "contract" || !monacoReady || signers > 1;
+  // TODO: Refresh editor to enable recheck
 
+  // RENDER
   return (
     <div>
       <Head>

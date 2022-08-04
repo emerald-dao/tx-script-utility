@@ -74,9 +74,7 @@ export default function Home() {
     const [registry, setRegistry] = useState(null);
     const [importList, setImportList] = useState({});
     const [finalImports, setFinalImports] = useState([]);
-
     const network = useNetworkContext() || "testnet";
-
     const templateInfo = getTemplateInfo(code);
     const { type, signers, args } = templateInfo;
 
@@ -86,6 +84,7 @@ export default function Home() {
         const newCode = replaceImportAddresses(code, env);
         updateScriptCode(newCode);
     };
+
     const send = async () => {
         await setEnvironment(network);
         extendEnvironment(registry);
@@ -132,6 +131,7 @@ export default function Home() {
                 break;
         }
     };
+
     const getRegistry = async () => {
         const data = await fetchRegistry();
         const registry = prepareEnvironments(data);
@@ -146,13 +146,16 @@ export default function Home() {
 
         getRegistry().then();
     }, []);
+
     useEffect(() => {
         setEnvironment(network);
         if (registry !== null) {
             extendEnvironment(registry);
         }
-    }, [network]);
+    }, [network, registry]);
+
     useEffect(() => getImports(code, setImportList), [code]);
+
     useEffect(
         () => prepareFinalImports(importList, setFinalImports),
         [importList, network]
@@ -168,8 +171,11 @@ export default function Home() {
     return (
         <div>
             <Head>
-                <title>Cadence Transaction Editor</title>
-                <meta name="description" content="My first web3 app on Flow!" />
+                <title>Cadence Executor</title>
+                <meta
+                    name="description"
+                    content="The ability to run Cadence scripts and utility directly from your browser!"
+                />
                 <link rel="icon" href="/favicon.png" />
             </Head>
 

@@ -61,6 +61,7 @@ const prepareFinalImports = async (list, setFinal) => {
 export const Executor = () => {
     const [monacoReady, setMonacoReady] = useState(false);
     const [code, updateScriptCode] = useState(flovatarTotalSupply);
+    const [running, setRunning] = useState(false);
     const [result, setResult] = useState();
     const [error, setError] = useState();
     const [user, setUser] = useState();
@@ -81,11 +82,13 @@ export const Executor = () => {
     const send = async () => {
         await setEnvironment(network);
         extendEnvironment(registry);
+        setRunning(true);
 
         switch (type) {
             // Script Handling
             case "script": {
                 const [result, scriptError] = await executeScript({ code });
+                setRunning(false);
                 if (!scriptError) {
                     setResult(result);
                     setError();
@@ -109,6 +112,7 @@ export const Executor = () => {
                     limit: 9999,
                     payer: fcl.authz,
                 });
+                setRunning(false);
                 if (!txError) {
                     setResult(txResult);
                     setError();
@@ -205,6 +209,7 @@ export const Executor = () => {
                             {getButtonLabel(type, signers)}
                         </button>
                     </div>
+                    {running && <span aria-busy="true">Running...</span>}
                     <h4>Result</h4>
                     {result ? (
                         typeof result === "object" ? (

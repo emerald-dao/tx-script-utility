@@ -3,15 +3,16 @@ import useLanguageServer from "./useLanguageServer";
 
 export const CadenceCheckerContext = createContext(null);
 
-export default function CadenceChecker(props) {
-  // Connect project to cadence checker hook
-  const cadenceChecker = useLanguageServer();
+const CadenceChecker = ({ children }) => {
+    // Connect project to cadence checker hook
+    const cadenceChecker = useLanguageServer();
 
-  // render
-  const { children } = props;
-  return (
-    <CadenceCheckerContext.Provider value={cadenceChecker}>
-      {children}
-    </CadenceCheckerContext.Provider>
-  );
-}
+    // render
+    return (
+        <CadenceCheckerContext.Provider value={cadenceChecker}>
+            {children}
+        </CadenceCheckerContext.Provider>
+    );
+};
+
+export default CadenceChecker;

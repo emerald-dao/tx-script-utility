@@ -5,8 +5,9 @@ import * as fcl from "@onflow/fcl";
 import { NetworkProvider } from "../contexts/NetworkContext";
 import { configureForNetwork } from "../flow/config";
 import React, { useState } from "react";
+import Toolbar from "../components/Toolbar";
 
-function MyApp({ Component, pageProps }) {
+const MyApp = ({ Component, pageProps }) => {
     const [network, setNetwork] = useState();
 
     const switchNetwork = async (e) => {
@@ -22,27 +23,7 @@ function MyApp({ Component, pageProps }) {
 
     return (
         <div>
-            <nav className="container header">
-                <ul>
-                    <li>
-                        <h1>Cadence Executor</h1>
-                    </li>
-                </ul>
-                <ul>
-                    <li>
-                        <label htmlFor="switch" onChange={switchNetwork}>
-                            <span className="inputChange">Testnet</span>
-                            <input
-                                type="checkbox"
-                                id="switch"
-                                name="switch"
-                                role="switch"
-                            />
-                            <span className="inputChange">Mainnet</span>
-                        </label>
-                    </li>
-                </ul>
-            </nav>
+            <Toolbar switchNetwork={switchNetwork} />
             <main className="container">
                 <TransactionProvider>
                     <NetworkProvider value={network}>
@@ -53,11 +34,15 @@ function MyApp({ Component, pageProps }) {
             <footer className="container">
                 <p>
                     Visit <a href="https://docs.onflow.org">docs.onflow.org</a>{" "}
-                    to learn more.
+                    to learn more. <br />
+                    Forked from the{" "}
+                    <a href="https://github.com/emerald-dao/tx-script-utility/">
+                        Emerald DAO TX Script Utility
+                    </a>
                 </p>
             </footer>
         </div>
     );
-}
+};
 
 export default MyApp;

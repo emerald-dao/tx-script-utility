@@ -16,7 +16,11 @@ import { baseScript, baseTransaction } from "../templates/code";
 import * as fcl from "@onflow/fcl";
 import "../flow/config.js";
 import { configureForNetwork } from "../flow/config";
-import { debounce, fetchRegistry, prepareEnvironments } from "../utils";
+import {
+    debounce,
+    fetchCatalogContractAndAddresses,
+    prepareEnvironments,
+} from "../utils";
 import { useRouter } from "next/router";
 
 const CadenceChecker = dynamic(() => import("./LSP/CadenceChecker"), {
@@ -158,7 +162,7 @@ const Runner = () => {
         fcl.unauthenticate();
         fcl.currentUser().subscribe(setUser);
         const getRegistry = async () => {
-            const data = await fetchRegistry();
+            const data = await fetchCatalogContractAndAddresses();
             const registry = prepareEnvironments(data);
             extendEnvironment(registry);
             setRegistry(registry);

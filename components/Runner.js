@@ -382,7 +382,7 @@ const Runner = () => {
                             <p>{result}</p>
                         )
                     ) : (
-                        <p>{error}</p>
+                        <p className="error">{error}</p>
                     )}
                 </article>
             )}

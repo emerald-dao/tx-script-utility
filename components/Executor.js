@@ -14,12 +14,13 @@ import {
     replaceImportAddresses,
 } from "flow-cadut";
 
-import { flovatarTotalSupply } from "../templates/code";
+import { baseScript, baseTransaction } from "../templates/code";
 
 import * as fcl from "@onflow/fcl";
 import "../flow/config.js";
 import { configureForNetwork } from "../flow/config";
 import { debounce, fetchRegistry, prepareEnvironments } from "../utils";
+import { useTransaction } from "../contexts/TransactionContext";
 
 const CadenceChecker = dynamic(() => import("./LSP/CadenceChecker"), {
     ssr: false,
@@ -43,7 +44,7 @@ const getButtonLabel = (type, signers = 0) => {
 export const Executor = () => {
     const [network, setNetwork] = useState("testnet");
     const [monacoReady, setMonacoReady] = useState(false);
-    const [code, updateScriptCode] = useState(flovatarTotalSupply);
+    const [code, updateScriptCode] = useState(baseScript);
     const [running, setRunning] = useState(false);
     const [result, setResult] = useState();
     const [error, setError] = useState();
@@ -53,8 +54,16 @@ export const Executor = () => {
     const [finalImports, setFinalImports] = useState([]);
     const templateInfo = getTemplateInfo(code);
     const { type, signers, args } = templateInfo;
+    const { setTxId } = useTransaction();
+
+    const clear = () => {
+        setResult();
+        setError();
+        setRunning(false);
+    };
 
     const switchNetwork = async (e) => {
+        clear();
         fcl.unauthenticate();
         if (e.target.checked) {
             configureForNetwork("mainnet");
@@ -63,6 +72,14 @@ export const Executor = () => {
             configureForNetwork("testnet");
             setNetwork("testnet");
         }
+    };
+
+    const getTransactionLink = (txId) => {
+        let baseUrl = `https://flowscan.org`;
+        if (network === "testnet") {
+            baseUrl = `https://testnet.flowscan.org`;
+        }
+        return `${baseUrl}/transaction/${txId}`;
     };
 
     // METHDOS
@@ -100,14 +117,15 @@ export const Executor = () => {
                     await fcl.authenticate();
                 }
 
-                const [txResult, txError] = await sendTransaction({
+                const [result, txError] = await sendTransaction({
                     code,
                     limit: 9999,
                     payer: fcl.authz,
+                    wait: false,
                 });
                 setRunning(false);
                 if (!txError) {
-                    setResult(txResult);
+                    setResult(getTransactionLink(result));
                     setError();
                 } else {
                     setResult();
@@ -168,7 +186,8 @@ export const Executor = () => {
         prepareFinalImports(importList);
     }, [importList, network]);
 
-    const fclAble = signers && signers === 1 && type === "transaction";
+    const fclAble =
+        user?.addr && signers && signers === 1 && type === "transaction";
     const disabled =
         type === "unknown" ||
         type === "contract" ||
@@ -199,18 +218,60 @@ export const Executor = () => {
                     <li>
                         <details role="list" dir="rtl">
                             <summary aria-haspopup="listbox" role="link">
-                                Options
+                                Templates
                             </summary>
                             <ul role="listbox">
                                 <li>
-                                    <a onClick={updateImports}>
-                                        Update Imports
+                                    <a
+                                        onClick={() => {
+                                            clear();
+                                            updateScriptCode(baseScript);
+                                        }}
+                                    >
+                                        Script
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        onClick={() => {
+                                            clear();
+                                            updateScriptCode(baseTransaction);
+                                        }}
+                                    >
+                                        Transaction
                                     </a>
                                 </li>
                             </ul>
                         </details>
                     </li>
-
+                    <li>
+                        <details role="list" dir="rtl">
+                            <summary aria-haspopup="listbox" role="link">
+                                Options
+                            </summary>
+                            <ul role="listbox">
+                                <li>
+                                    <a
+                                        onClick={() =>
+                                            user?.addr
+                                                ? fcl.unauthenticate()
+                                                : fcl.authenticate()
+                                        }
+                                    >
+                                        {user?.addr ? "Logout" : "Login"}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a onClick={updateImports}>
+                                        Update Imports
+                                    </a>
+                                </li>
+                                <li>
+                                    <a onClick={() => clear()}>Clear Results</a>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
                     <li>
                         <a
                             href="#"
@@ -224,7 +285,6 @@ export const Executor = () => {
                     </li>
                 </ul>
             </nav>
-            <Transaction />
             <CadenceChecker>
                 <div className="cadence-container">
                     <CadenceEditor
@@ -243,15 +303,31 @@ export const Executor = () => {
                 </span>
             )}
             {monacoReady && (
-                <>
-                    {running && <span aria-busy="true">Running...</span>}
-                    <h4>{capitalize(type)} Result</h4>
-                    {type === "transaction" && <h4>Running as {user?.addr}</h4>}
-                    {fclAble ? (
-                        <p className="note">
-                            ✅ Transaction could be signed with FCL
-                        </p>
-                    ) : null}
+                <article aria-busy={running}>
+                    <header>
+                        {capitalize(type)} Result
+                        {type === "transaction" &&
+                            (user?.addr ? (
+                                <>
+                                    <br />
+                                    <p className="note">
+                                        Running as {user?.addr}
+                                    </p>
+                                </>
+                            ) : (
+                                <>
+                                    <br />
+                                    <a onClick={() => fcl.authenticate()}>
+                                        Login
+                                    </a>
+                                </>
+                            ))}
+                        {fclAble ? (
+                            <p className="note">
+                                ✅ Transaction could be signed with FCL
+                            </p>
+                        ) : null}
+                    </header>
                     {result ? (
                         typeof result === "object" ? (
                             <DynamicReactJson src={result} theme="monokai" />
@@ -261,7 +337,8 @@ export const Executor = () => {
                     ) : (
                         <p>{error}</p>
                     )}
-                </>
+                    {type === "transaction" && <Transaction />}
+                </article>
             )}
         </>
     );

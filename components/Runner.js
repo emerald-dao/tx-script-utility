@@ -374,7 +374,10 @@ const Runner = () => {
                     </header>
                     {result ? (
                         typeof result === "object" ? (
-                            <DynamicReactJson src={result} theme="monokai" />
+                            <DynamicReactJson
+                                src={result}
+                                theme="shapeshifter:inverted"
+                            />
                         ) : (
                             <p>{result}</p>
                         )

@@ -350,27 +350,28 @@ const Runner = () => {
                 <article className={result ? "success" : error ? "error" : ""}>
                     <header aria-busy={running}>
                         {capitalize(type)} Result
-                        {type === "transaction" &&
-                            (user?.addr ? (
-                                <>
-                                    <br />
-                                    <p className="note">
-                                        Running as {user?.addr}
-                                    </p>
-                                </>
-                            ) : (
-                                <>
-                                    <br />
+                        {type === "transaction" && (
+                            <span className="note right">
+                                {user?.addr ? (
+                                    <>
+                                        Running as {user?.addr}&nbsp;
+                                        {fclAble ? (
+                                            <span data-tooltip="Transaction can be signed with FCL">
+                                                ✅
+                                            </span>
+                                        ) : (
+                                            <span data-tooltip="Transaction might not be signed with FCL.  Transaction may fail.">
+                                                ❌
+                                            </span>
+                                        )}
+                                    </>
+                                ) : (
                                     <a onClick={() => fcl.authenticate()}>
                                         Login
                                     </a>
-                                </>
-                            ))}
-                        {fclAble ? (
-                            <p className="note">
-                                ✅ Transaction could be signed with FCL
-                            </p>
-                        ) : null}
+                                )}
+                            </span>
+                        )}
                     </header>
                     {result ? (
                         typeof result === "object" ? (

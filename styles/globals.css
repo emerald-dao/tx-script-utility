@@ -147,6 +147,9 @@ footer.container {
   font-size: 0.9em;
   color: #999;
 }
+.note.right {
+  float: right;
+}
 
 .cadence-container {
   padding: 1em;

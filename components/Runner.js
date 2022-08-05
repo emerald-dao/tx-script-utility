@@ -315,15 +315,14 @@ const Runner = () => {
                         </details>
                     </li>
                     <li>
-                        <a
-                            href="#"
+                        <button
                             role="button"
                             onClick={send}
                             disabled={disabled}
                             aria-busy={running}
                         >
                             {getButtonLabel(type, signers)}
-                        </a>
+                        </button>
                     </li>
                 </ul>
             </nav>

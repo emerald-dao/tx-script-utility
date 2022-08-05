@@ -95,6 +95,7 @@ const Runner = () => {
     };
 
     const send = async () => {
+        clear();
         await setEnvironment(network);
         extendEnvironment(registry);
         setRunning(true);
@@ -311,8 +312,8 @@ const Runner = () => {
                 </dialog>
             )}
             {monacoReady && (
-                <article aria-busy={running}>
-                    <header>
+                <article>
+                    <header aria-busy={running}>
                         {capitalize(type)} Result
                         {type === "transaction" &&
                             (user?.addr ? (

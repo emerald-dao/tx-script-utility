@@ -14,7 +14,6 @@ import {
     replaceImportAddresses,
 } from "flow-cadut";
 
-import { useNetworkContext } from "../contexts/NetworkContext";
 import { flovatarTotalSupply } from "../templates/code";
 
 import * as fcl from "@onflow/fcl";
@@ -27,6 +26,9 @@ const CadenceChecker = dynamic(() => import("./LSP/CadenceChecker"), {
 });
 const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
 
+// String helper function
+const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+
 const getButtonLabel = (type, signers = 0) => {
     if (type === "contract") {
         return "Not Supported";
@@ -38,27 +40,8 @@ const getButtonLabel = (type, signers = 0) => {
     return buttonLabels[type];
 };
 
-const getImports = debounce(async (code, setList) => {
-    const list = extractImports(code);
-    setList(list);
-}, 300);
-
-const prepareFinalImports = async (list, setFinal) => {
-    const env = await getEnvironment();
-    const replacedList = {};
-    for (const key in list) {
-        replacedList[key] = env[key];
-    }
-    const finalList = Object.keys(replacedList).map((key) => {
-        return {
-            name: key,
-            address: replacedList[key],
-        };
-    });
-    setFinal(finalList);
-};
-
 export const Executor = () => {
+    const [network, setNetwork] = useState("testnet");
     const [monacoReady, setMonacoReady] = useState(false);
     const [code, updateScriptCode] = useState(flovatarTotalSupply);
     const [running, setRunning] = useState(false);
@@ -68,9 +51,19 @@ export const Executor = () => {
     const [registry, setRegistry] = useState(null);
     const [importList, setImportList] = useState({});
     const [finalImports, setFinalImports] = useState([]);
-    const network = useNetworkContext() || "testnet";
     const templateInfo = getTemplateInfo(code);
     const { type, signers, args } = templateInfo;
+
+    const switchNetwork = async (e) => {
+        fcl.unauthenticate();
+        if (e.target.checked) {
+            configureForNetwork("mainnet");
+            setNetwork("mainnet");
+        } else {
+            configureForNetwork("testnet");
+            setNetwork("testnet");
+        }
+    };
 
     // METHDOS
     const updateImports = async () => {
@@ -129,18 +122,17 @@ export const Executor = () => {
         }
     };
 
-    const getRegistry = async () => {
-        const data = await fetchRegistry();
-        const registry = prepareEnvironments(data);
-        extendEnvironment(registry);
-        setRegistry(registry);
-    };
-
     // EFFECTS
     useEffect(() => {
         fcl.unauthenticate();
         fcl.currentUser().subscribe(setUser);
-        getRegistry().then();
+        const getRegistry = async () => {
+            const data = await fetchRegistry();
+            const registry = prepareEnvironments(data);
+            extendEnvironment(registry);
+            setRegistry(registry);
+        };
+        getRegistry();
     }, []);
 
     useEffect(() => {
@@ -150,12 +142,31 @@ export const Executor = () => {
         }
     }, [network, registry]);
 
-    useEffect(() => getImports(code, setImportList), [code]);
+    useEffect(() => {
+        const getImports = debounce(async () => {
+            const list = extractImports(code);
+            setImportList(list);
+        }, 300);
+        getImports(code, setImportList);
+    }, [code]);
 
-    useEffect(
-        () => prepareFinalImports(importList, setFinalImports),
-        [importList, network]
-    );
+    useEffect(() => {
+        const prepareFinalImports = async () => {
+            const env = await getEnvironment();
+            const replacedList = {};
+            for (const key in importList) {
+                replacedList[key] = env[key];
+            }
+            const finalList = Object.keys(replacedList).map((key) => {
+                return {
+                    name: key,
+                    address: replacedList[key],
+                };
+            });
+            setFinalImports(finalList);
+        };
+        prepareFinalImports(importList);
+    }, [importList, network]);
 
     const fclAble = signers && signers === 1 && type === "transaction";
     const disabled =
@@ -166,6 +177,53 @@ export const Executor = () => {
 
     return (
         <>
+            <nav className="container header">
+                <ul>
+                    <li>
+                        <h1>Cadence Executor</h1>
+                    </li>
+                </ul>
+                <ul>
+                    <li>
+                        <label htmlFor="switch" onChange={switchNetwork}>
+                            <span className="inputChange">Testnet</span>
+                            <input
+                                type="checkbox"
+                                id="switch"
+                                name="switch"
+                                role="switch"
+                            />
+                            <span className="inputChange">Mainnet</span>
+                        </label>
+                    </li>
+                    <li>
+                        <details role="list" dir="rtl">
+                            <summary aria-haspopup="listbox" role="link">
+                                Options
+                            </summary>
+                            <ul role="listbox">
+                                <li>
+                                    <a onClick={updateImports}>
+                                        Update Imports
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+
+                    <li>
+                        <a
+                            href="#"
+                            role="button"
+                            onClick={send}
+                            disabled={disabled}
+                            aria-busy={running}
+                        >
+                            {getButtonLabel(type, signers)}
+                        </a>
+                    </li>
+                </ul>
+            </nav>
             <Transaction />
             <CadenceChecker>
                 <div className="cadence-container">
@@ -186,31 +244,14 @@ export const Executor = () => {
             )}
             {monacoReady && (
                 <>
-                    <div className="mb-1">
-                        <h4>Replaced Addresses</h4>
-                        <p>
-                            These are the addresses, which will be used, before
-                            sending Cadence template to network:
-                        </p>
-                        <ul>
-                            {finalImports.map((item) => {
-                                const { name, address } = item;
-                                return (
-                                    <li key={name}>
-                                        <b>{name}</b> : {address}
-                                    </li>
-                                );
-                            })}
-                        </ul>
-                    </div>
-                    <div className="two-items-grid">
-                        <button onClick={updateImports}>Update Imports</button>
-                        <button onClick={send} disabled={disabled}>
-                            {getButtonLabel(type, signers)}
-                        </button>
-                    </div>
                     {running && <span aria-busy="true">Running...</span>}
-                    <h4>Result</h4>
+                    <h4>{capitalize(type)} Result</h4>
+                    {type === "transaction" && <h4>Running as {user?.addr}</h4>}
+                    {fclAble ? (
+                        <p className="note">
+                            ✅ Transaction could be signed with FCL
+                        </p>
+                    ) : null}
                     {result ? (
                         typeof result === "object" ? (
                             <DynamicReactJson src={result} theme="monokai" />
@@ -220,12 +261,6 @@ export const Executor = () => {
                     ) : (
                         <p>{error}</p>
                     )}
-                    <h1>{user?.addr}</h1>
-                    {fclAble ? (
-                        <p className="note">
-                            ✅ Transaction could be signed with FCL
-                        </p>
-                    ) : null}
                 </>
             )}
         </>

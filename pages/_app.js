@@ -1,34 +1,14 @@
 import "@picocss/pico";
 import "../styles/globals.css";
+import React from "react";
 import TransactionProvider from "../contexts/TransactionContext";
-import * as fcl from "@onflow/fcl";
-import { NetworkProvider } from "../contexts/NetworkContext";
-import { configureForNetwork } from "../flow/config";
-import React, { useState } from "react";
-import Toolbar from "../components/Toolbar";
 
 const MyApp = ({ Component, pageProps }) => {
-    const [network, setNetwork] = useState();
-
-    const switchNetwork = async (e) => {
-        fcl.unauthenticate();
-        if (e.target.checked) {
-            configureForNetwork("mainnet");
-            setNetwork("mainnet");
-        } else {
-            configureForNetwork("testnet");
-            setNetwork("testnet");
-        }
-    };
-
     return (
         <div>
-            <Toolbar switchNetwork={switchNetwork} />
             <main className="container">
                 <TransactionProvider>
-                    <NetworkProvider value={network}>
-                        <Component {...pageProps} />
-                    </NetworkProvider>
+                    <Component {...pageProps} />
                 </TransactionProvider>
             </main>
             <footer className="container">

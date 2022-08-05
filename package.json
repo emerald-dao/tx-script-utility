@@ -9,8 +9,8 @@
         "format:fix": "prettier --write --ignore-path .gitignore ."
     },
     "dependencies": {
-        "@onflow/cadence-language-server": "^0.23.0",
-        "@onflow/fcl": "^0.0.77",
+        "@onflow/cadence-language-server": "^0.24.3",
+        "@onflow/fcl": "^1.2.0",
         "@picocss/pico": "^1.4.1",
         "copy-webpack-plugin": "^10.2.4",
         "flow-cadut": "^0.1.15-alpha.26",

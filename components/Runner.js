@@ -39,7 +39,7 @@ const getButtonLabel = (type, signers = 0) => {
     return buttonLabels[type];
 };
 
-export const Executor = () => {
+const Runner = () => {
     const [network, setNetwork] = useState("testnet");
     const [monacoReady, setMonacoReady] = useState(false);
     const [code, updateScriptCode] = useState(baseScript);
@@ -196,7 +196,7 @@ export const Executor = () => {
             <nav className="container header">
                 <ul>
                     <li>
-                        <h1>Cadence Executor</h1>
+                        <h1>Cadence Runner</h1>
                     </li>
                 </ul>
                 <ul>
@@ -339,3 +339,5 @@ export const Executor = () => {
         </>
     );
 };
+
+export default Runner;

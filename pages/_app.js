@@ -1,15 +1,12 @@
 import "@picocss/pico";
 import "../styles/globals.css";
 import React from "react";
-import TransactionProvider from "../contexts/TransactionContext";
 
 const MyApp = ({ Component, pageProps }) => {
     return (
         <div>
             <main className="container">
-                <TransactionProvider>
-                    <Component {...pageProps} />
-                </TransactionProvider>
+                <Component {...pageProps} />
             </main>
             <footer className="container">
                 <p>

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import Transaction from "./Transaction";
 import CadenceEditor from "./CadenceEditor";
 import { buttonLabels } from "../templates/labels";
 import {
@@ -20,7 +19,6 @@ import * as fcl from "@onflow/fcl";
 import "../flow/config.js";
 import { configureForNetwork } from "../flow/config";
 import { debounce, fetchRegistry, prepareEnvironments } from "../utils";
-import { useTransaction } from "../contexts/TransactionContext";
 
 const CadenceChecker = dynamic(() => import("./LSP/CadenceChecker"), {
     ssr: false,
@@ -54,7 +52,6 @@ export const Executor = () => {
     const [finalImports, setFinalImports] = useState([]);
     const templateInfo = getTemplateInfo(code);
     const { type, signers, args } = templateInfo;
-    const { setTxId } = useTransaction();
 
     const clear = () => {
         setResult();
@@ -337,7 +334,6 @@ export const Executor = () => {
                     ) : (
                         <p>{error}</p>
                     )}
-                    {type === "transaction" && <Transaction />}
                 </article>
             )}
         </>

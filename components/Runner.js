@@ -235,7 +235,7 @@ const Runner = () => {
                                 id="switch"
                                 name="switch"
                                 role="switch"
-                                checked={network === "mainnet"}
+                                defaultChecked={network === "mainnet"}
                             />
                             <span className="inputChange">Mainnet</span>
                         </label>

@@ -124,10 +124,14 @@ footer {
   margin: 10px 0px;
 }
 
-.error {
+article.success {
+  background: rgba(0, 125, 0, 0.5);
+	border-left: 5px solid #00ee8a;
+}
+
+article.error {
   background: rgba(125, 0, 0, 0.5);
 	border-left: 5px solid #ff0000;
-  padding-left: 10px;
 }
 
 footer.container {

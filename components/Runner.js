@@ -347,7 +347,7 @@ const Runner = () => {
                 </dialog>
             )}
             {monacoReady && (
-                <article>
+                <article className={result ? "success" : error ? "error" : ""}>
                     <header aria-busy={running}>
                         {capitalize(type)} Result
                         {type === "transaction" &&
@@ -382,7 +382,7 @@ const Runner = () => {
                             <p>{result}</p>
                         )
                     ) : (
-                        <p className="error">{error}</p>
+                        <p>{error}</p>
                     )}
                 </article>
             )}

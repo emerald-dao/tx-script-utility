@@ -19,6 +19,7 @@ import * as fcl from "@onflow/fcl";
 import "../flow/config.js";
 import { configureForNetwork } from "../flow/config";
 import { debounce, fetchRegistry, prepareEnvironments } from "../utils";
+import { useRouter } from "next/router";
 
 const CadenceChecker = dynamic(() => import("./LSP/CadenceChecker"), {
     ssr: false,
@@ -40,6 +41,7 @@ const getButtonLabel = (type, signers = 0) => {
 };
 
 const Runner = () => {
+    const { query } = useRouter();
     const [network, setNetwork] = useState("testnet");
     const [monacoReady, setMonacoReady] = useState(false);
     const [code, updateScriptCode] = useState(baseScript);
@@ -58,6 +60,12 @@ const Runner = () => {
         setError();
         setRunning(false);
     };
+
+    useEffect(() => {
+        if (query && query.code) {
+            updateScriptCode(Buffer.from(query.code, "base64").toString());
+        }
+    }, [query]);
 
     const switchNetwork = async (e) => {
         clear();

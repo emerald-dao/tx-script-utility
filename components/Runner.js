@@ -76,6 +76,13 @@ const Runner = () => {
         if (query && query.code) {
             updateScriptCode(Buffer.from(query.code, "base64").toString());
         }
+        if (
+            query &&
+            query.network &&
+            (query.network === "testnet" || query.network === "mainnet")
+        ) {
+            setNetwork(query.network);
+        }
     }, [query]);
 
     const switchNetwork = async (e) => {
@@ -228,6 +235,7 @@ const Runner = () => {
                                 id="switch"
                                 name="switch"
                                 role="switch"
+                                checked={network === "mainnet"}
                             />
                             <span className="inputChange">Mainnet</span>
                         </label>
@@ -288,10 +296,12 @@ const Runner = () => {
                                         onClick={() => {
                                             copyToClipboard(
                                                 `${
-                                                    window.location.href
+                                                    window.location.host
                                                 }?code=${Buffer.from(
                                                     code
-                                                ).toString("base64")}`
+                                                ).toString(
+                                                    "base64"
+                                                )}&network=${network}`
                                             );
                                         }}
                                     >

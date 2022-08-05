@@ -11,7 +11,7 @@ import {
     getEnvironment,
     extractImports,
     replaceImportAddresses,
-} from "flow-cadut";
+} from "@onflow/flow-cadut";
 import { baseScript, baseTransaction } from "../templates/code";
 import * as fcl from "@onflow/fcl";
 import "../flow/config.js";

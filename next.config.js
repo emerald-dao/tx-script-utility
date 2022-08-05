@@ -1,6 +1,6 @@
 const MonacoWebpackPlugin = require("monaco-editor-webpack-plugin");
 const nextTranspileModules = require("next-transpile-modules");
-const withTM = nextTranspileModules(["monaco-editor", "flow-cadut"]);
+const withTM = nextTranspileModules(["monaco-editor", "@onflow/flow-cadut"]);
 
 module.exports = withTM({
     reactStrictMode: true,

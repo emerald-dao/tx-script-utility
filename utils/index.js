@@ -1,4 +1,4 @@
-import { executeScript, setEnvironment } from "flow-cadut";
+import { executeScript, setEnvironment } from "@onflow/flow-cadut";
 
 const catalogMainnet = "0x49a7cda3a1eecc29";
 const catalogTestnet = "0x324c34e1c517e4db";

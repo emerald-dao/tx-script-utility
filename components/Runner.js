@@ -295,9 +295,12 @@ const Runner = () => {
                 </div>
             </CadenceChecker>
             {!monacoReady && (
-                <span aria-busy="true">
-                    Please wait while we setup the Cadence Editor...
-                </span>
+                <dialog open>
+                    <article>
+                        <progress indeterminate="true"></progress>
+                        Please wait while we setup the Cadence Editor...
+                    </article>
+                </dialog>
             )}
             {monacoReady && (
                 <article aria-busy={running}>

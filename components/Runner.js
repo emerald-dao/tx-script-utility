@@ -12,9 +12,7 @@ import {
     extractImports,
     replaceImportAddresses,
 } from "flow-cadut";
-
 import { baseScript, baseTransaction } from "../templates/code";
-
 import * as fcl from "@onflow/fcl";
 import "../flow/config.js";
 import { configureForNetwork } from "../flow/config";
@@ -39,6 +37,15 @@ const getButtonLabel = (type, signers = 0) => {
     }
     return buttonLabels[type];
 };
+
+function copyToClipboard(text) {
+    var dummy = document.createElement("textarea");
+    document.body.appendChild(dummy);
+    dummy.value = text;
+    dummy.select();
+    document.execCommand("copy");
+    document.body.removeChild(dummy);
+}
 
 const Runner = () => {
     const { query } = useRouter();
@@ -270,6 +277,21 @@ const Runner = () => {
                                 <li>
                                     <a onClick={updateImports}>
                                         Update Imports
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        onClick={() => {
+                                            copyToClipboard(
+                                                `${
+                                                    window.location.href
+                                                }?code=${Buffer.from(
+                                                    code
+                                                ).toString("base64")}`
+                                            );
+                                        }}
+                                    >
+                                        Copy Link To Code
                                     </a>
                                 </li>
                                 <li>

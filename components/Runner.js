@@ -145,11 +145,10 @@ const Runner = () => {
                     code,
                     limit: 9999,
                     payer: fcl.authz,
-                    wait: false,
                 });
                 setRunning(false);
                 if (!txError) {
-                    setResult(getTransactionLink(result));
+                    setResult(result);
                     setError();
                 } else {
                     setResult();
@@ -350,6 +349,19 @@ const Runner = () => {
                 <article className={result ? "success" : error ? "error" : ""}>
                     <header aria-busy={running}>
                         {capitalize(type)} Result
+                        {result && type === "transaction" ? (
+                            <a
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                href={getTransactionLink(
+                                    result.txId.transactionId
+                                )}
+                            >
+                                &nbsp;🔗
+                            </a>
+                        ) : (
+                            ""
+                        )}
                         {type === "transaction" && (
                             <span className="note right">
                                 {user?.addr ? (

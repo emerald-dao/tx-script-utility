@@ -103,6 +103,9 @@ const Runner = () => {
     };
 
     const getTransactionLink = (txId) => {
+        if (network === "emulator") {
+            return undefined;
+        }
         let baseUrl = `https://flowscan.org`;
         if (network === "testnet") {
             baseUrl = `https://testnet.flowscan.org`;
@@ -380,7 +383,9 @@ const Runner = () => {
                 <article className={result ? "success" : error ? "error" : ""}>
                     <header aria-busy={running}>
                         {capitalize(type)} Result
-                        {result && type === "transaction" ? (
+                        {result &&
+                        type === "transaction" &&
+                        getTransactionLink(result.txId.transactionId) ? (
                             <a
                                 target="_blank"
                                 rel="noopener noreferrer"

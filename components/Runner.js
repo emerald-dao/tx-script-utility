@@ -22,7 +22,14 @@ import {
     prepareEnvironments,
 } from "../utils";
 import { useRouter } from "next/router";
-import { FaGlobe, FaBook, FaBars } from "react-icons/fa";
+import {
+    FaGlobe,
+    FaBook,
+    FaBars,
+    FaCheck,
+    FaExclamationTriangle,
+    FaLink,
+} from "react-icons/fa";
 
 const CadenceChecker = dynamic(() => import("./LSP/CadenceChecker"), {
     ssr: false,
@@ -381,7 +388,8 @@ const Runner = () => {
                                     result.txId.transactionId
                                 )}
                             >
-                                &nbsp;🔗
+                                &nbsp;
+                                <FaLink />
                             </a>
                         ) : (
                             ""
@@ -393,11 +401,11 @@ const Runner = () => {
                                         Running as {user?.addr}&nbsp;
                                         {fclAble ? (
                                             <span data-tooltip="Transaction can be signed with FCL">
-                                                ✅
+                                                <FaCheck />
                                             </span>
                                         ) : (
                                             <span data-tooltip="Transaction might not be signed with FCL.  Transaction may fail.">
-                                                ❌
+                                                <FaExclamationTriangle />
                                             </span>
                                         )}
                                     </>

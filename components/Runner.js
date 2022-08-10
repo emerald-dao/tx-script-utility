@@ -222,7 +222,7 @@ const Runner = () => {
             <nav className="container header">
                 <ul>
                     <li>
-                        <h1>Cadence Runner</h1>
+                        <h1>Flow Runner</h1>
                     </li>
                 </ul>
                 <ul>

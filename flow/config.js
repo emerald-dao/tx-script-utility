@@ -1,6 +1,6 @@
 import { config } from "@onflow/fcl";
 
-const title = "Cadence Runner";
+const title = "Flow Runner";
 const testnetConfig = {
     "app.detail.title": title,
     "accessNode.api": "https://rest-testnet.onflow.org",

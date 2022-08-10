@@ -29,6 +29,7 @@ import {
     FaCheck,
     FaExclamationTriangle,
     FaLink,
+    FaInfo,
 } from "react-icons/fa";
 
 const CadenceChecker = dynamic(() => import("./LSP/CadenceChecker"), {
@@ -242,6 +243,11 @@ const Runner = () => {
                                     <FaGlobe />
                                     &nbsp;
                                     {capitalize(network)}
+                                    {network === "emulator" && (
+                                        <p data-tooltip="You must be running a local emulator (on :8888) and/or dev wallet (on :8701/fcl/authn)">
+                                            <FaInfo />
+                                        </p>
+                                    )}
                                 </div>
                             </summary>
                             <ul role="listbox">

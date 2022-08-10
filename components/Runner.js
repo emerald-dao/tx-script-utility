@@ -22,6 +22,7 @@ import {
     prepareEnvironments,
 } from "../utils";
 import { useRouter } from "next/router";
+import { FaGlobe, FaBook, FaBars } from "react-icons/fa";
 
 const CadenceChecker = dynamic(() => import("./LSP/CadenceChecker"), {
     ssr: false,
@@ -79,22 +80,19 @@ const Runner = () => {
         if (
             query &&
             query.network &&
-            (query.network === "testnet" || query.network === "mainnet")
+            (query.network === "testnet" ||
+                query.network === "mainnet" ||
+                query.network === "emulator")
         ) {
             setNetwork(query.network);
         }
     }, [query]);
 
-    const switchNetwork = async (e) => {
+    const switchNetwork = (network) => {
         clear();
         fcl.unauthenticate();
-        if (e.target.checked) {
-            configureForNetwork("mainnet");
-            setNetwork("mainnet");
-        } else {
-            configureForNetwork("testnet");
-            setNetwork("testnet");
-        }
+        configureForNetwork(network);
+        setNetwork(network);
     };
 
     const getTransactionLink = (txId) => {
@@ -137,7 +135,6 @@ const Runner = () => {
             // Transaction Handling
             case "transaction": {
                 if (!fcl.currentUser()) {
-                    configureForNetwork(network);
                     await fcl.authenticate();
                 }
 
@@ -224,25 +221,50 @@ const Runner = () => {
                     <li>
                         <h1>Flow Runner</h1>
                     </li>
+                    <li>
+                        <details role="list">
+                            <summary
+                                aria-haspopup="listbox"
+                                role="button"
+                                className="contrast outline"
+                            >
+                                <div className="centered-label">
+                                    <FaGlobe />
+                                    &nbsp;
+                                    {capitalize(network)}
+                                </div>
+                            </summary>
+                            <ul role="listbox">
+                                <li>
+                                    <a onClick={() => switchNetwork("testnet")}>
+                                        Testnet
+                                    </a>
+                                </li>
+                                <li>
+                                    <a onClick={() => switchNetwork("mainnet")}>
+                                        Mainnet
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        onClick={() =>
+                                            switchNetwork("emulator")
+                                        }
+                                    >
+                                        Emulator
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
                 </ul>
                 <ul>
                     <li>
-                        <label htmlFor="switch" onChange={switchNetwork}>
-                            <span className="inputChange">Testnet</span>
-                            <input
-                                type="checkbox"
-                                id="switch"
-                                name="switch"
-                                role="switch"
-                                defaultChecked={network === "mainnet"}
-                            />
-                            <span className="inputChange">Mainnet</span>
-                        </label>
-                    </li>
-                    <li>
                         <details role="list" dir="rtl">
-                            <summary aria-haspopup="listbox" role="link">
-                                Templates
+                            <summary role="link">
+                                <div className="centered-label">
+                                    <FaBook />
+                                </div>
                             </summary>
                             <ul role="listbox">
                                 <li>
@@ -270,8 +292,10 @@ const Runner = () => {
                     </li>
                     <li>
                         <details role="list" dir="rtl">
-                            <summary aria-haspopup="listbox" role="link">
-                                Options
+                            <summary role="link">
+                                <div className="centered-label">
+                                    <FaBars />
+                                </div>
                             </summary>
                             <ul role="listbox">
                                 <li>

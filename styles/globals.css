@@ -165,3 +165,12 @@ footer.container {
   grid-template-columns: repeat(2, 1fr);
   grid-gap: 1em;
 }
+
+.react-icons {
+  vertical-align: middle;
+}
+
+.centered-label {
+  display: flex;
+  align-items: center;
+}

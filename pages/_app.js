@@ -1,12 +1,15 @@
 import "@picocss/pico";
 import "../styles/globals.css";
 import React from "react";
+import { IconContext } from "react-icons";
 
 const MyApp = ({ Component, pageProps }) => {
     return (
         <div>
             <main className="container">
-                <Component {...pageProps} />
+                <IconContext.Provider value={{ className: "react-icons" }}>
+                    <Component {...pageProps} />
+                </IconContext.Provider>
             </main>
             <footer className="container">
                 <p>

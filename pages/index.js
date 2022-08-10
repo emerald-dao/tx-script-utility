@@ -6,7 +6,7 @@ const Home = () => {
     return (
         <div>
             <Head>
-                <title>Cadence Runner</title>
+                <title>Flow Runner</title>
                 <meta
                     name="description"
                     content="The ability to run Cadence scripts and transactions directly from your browser!"

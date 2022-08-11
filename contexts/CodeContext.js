@@ -16,6 +16,7 @@ export const useCode = () => useContext(CodeContext);
 const CodeProvider = ({ children }) => {
     const { network } = useFlow();
     const [code, setCode] = useState(baseScript);
+    const [readOnly, setReadOnly] = useState(false);
     const [editorReady, setEditorReady] = useState(false);
     const [running, setRunning] = useState(false);
     const [result, setResult] = useState();
@@ -75,6 +76,8 @@ const CodeProvider = ({ children }) => {
     const value = {
         code,
         setCode,
+        readOnly,
+        setReadOnly,
         editorReady,
         clearResults,
         setEditorReady,

@@ -8,7 +8,7 @@ const MonacoEditor = dynamic(() => import("react-monaco-editor"), {
 });
 
 const CadenceEditor = () => {
-    const { code, setCode, setEditorReady } = useCode();
+    const { code, setCode, readOnly, setEditorReady } = useCode();
     return (
         <MonacoEditor
             editorDidMount={(editor, monaco) => {
@@ -28,6 +28,7 @@ const CadenceEditor = () => {
                 minimap: {
                     enabled: false,
                 },
+                readOnly: readOnly,
             }}
         />
     );

@@ -14,16 +14,28 @@ pub fun main(): {String : Address} {
 }`;
 
 export const fetchCatalogContractAndAddresses = async () => {
-    // Testnet
-    await setEnvironment("testnet");
-    const [testnet] = await executeScript({
-        code: catalogScript.replace("CATALOG_ADDRESS", catalogTestnet),
-    });
-    await setEnvironment("mainnet");
-    const [mainnet] = await executeScript({
-        code: catalogScript.replace("CATALOG_ADDRESS", catalogMainnet),
-    });
-    return { testnet: testnet, mainnet: mainnet };
+    let results = { testnet: {}, mainnet: {} };
+    try {
+        // Testnet
+        await setEnvironment("testnet");
+        const [testnet] = await executeScript({
+            code: catalogScript.replace("CATALOG_ADDRESS", catalogTestnet),
+        });
+        results = { ...results, testnet: { ...testnet } };
+    } catch (err) {
+        console.error(err);
+    }
+    try {
+        // Mainnet
+        await setEnvironment("mainnet");
+        const [mainnet] = await executeScript({
+            code: catalogScript.replace("CATALOG_ADDRESS", catalogMainnet),
+        });
+        results = { ...results, mainnet: { ...mainnet } };
+    } catch (err) {
+        console.error(err);
+    }
+    return results;
 };
 
 export const prepareEnvironments = (json) => {

@@ -60,12 +60,5 @@ export const prepareEnvironments = (json) => {
     };
 };
 
-export const debounce = (func, wait = 500) => {
-    let timeout;
-    return function (...args) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-            func.apply(this, args);
-        }, wait);
-    };
-};
+// String helper function
+export const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);

@@ -1,17 +1,19 @@
 import React from "react";
 import configureCadence from "./cadence";
 import dynamic from "next/dynamic";
+import { useCode } from "../../contexts/CodeContext";
 
 const MonacoEditor = dynamic(() => import("react-monaco-editor"), {
     ssr: false,
 });
 
-const CadenceEditor = ({ onReady, code, updateCode }) => {
+const CadenceEditor = () => {
+    const { code, setCode, setEditorReady } = useCode();
     return (
         <MonacoEditor
             editorDidMount={(editor, monaco) => {
                 configureCadence(monaco);
-                onReady(monaco);
+                setEditorReady(true);
 
                 // Register event listener to resize Monaco to container
                 window.addEventListener("resize", () => {
@@ -19,7 +21,7 @@ const CadenceEditor = ({ onReady, code, updateCode }) => {
                 });
             }}
             value={code}
-            onChange={updateCode}
+            onChange={setCode}
             height={600}
             language="cadence"
             options={{

@@ -2,25 +2,12 @@ import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import CadenceEditor from "./CadenceEditor";
 import { buttonLabels } from "../templates/labels";
-import {
-    executeScript,
-    sendTransaction,
-    getTemplateInfo,
-    setEnvironment,
-    extendEnvironment,
-    getEnvironment,
-    extractImports,
-    replaceImportAddresses,
-} from "@onflow/flow-cadut";
+import { executeScript, sendTransaction } from "@onflow/flow-cadut";
 import { baseScript, baseTransaction } from "../templates/code";
+import { useCode } from "../contexts/CodeContext";
+import { useFlow } from "../contexts/FlowContext";
 import * as fcl from "@onflow/fcl";
-import "../flow/config.js";
-import { configureForNetwork } from "../flow/config";
-import {
-    debounce,
-    fetchCatalogContractAndAddresses,
-    prepareEnvironments,
-} from "../utils";
+import { capitalize } from "../utils";
 import { useRouter } from "next/router";
 import {
     FaGlobe,
@@ -38,20 +25,6 @@ const CadenceChecker = dynamic(() => import("./LSP/CadenceChecker"), {
 });
 const DynamicReactJson = dynamic(import("react-json-view"), { ssr: false });
 
-// String helper function
-const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
-
-const getButtonLabel = (type, signers = 0) => {
-    if (type === "contract") {
-        return "Not Supported";
-    }
-    if (signers > 1) {
-        // TODO: Implement multisig
-        return "Multisig is not Supported";
-    }
-    return buttonLabels[type];
-};
-
 function copyToClipboard(text) {
     var dummy = document.createElement("textarea");
     document.body.appendChild(dummy);
@@ -63,18 +36,13 @@ function copyToClipboard(text) {
 
 const Runner = () => {
     const { query } = useRouter();
-    const [network, setNetwork] = useState("testnet");
-    const [monacoReady, setMonacoReady] = useState(false);
-    const [code, updateScriptCode] = useState(baseScript);
+    const { code, setCode, editorReady, updateImports, templateInfo } =
+        useCode();
+    const { network, switchNetwork, getTransactionLink, user } = useFlow();
     const [running, setRunning] = useState(false);
     const [result, setResult] = useState();
     const [error, setError] = useState();
-    const [user, setUser] = useState();
-    const [registry, setRegistry] = useState(null);
-    const [importList, setImportList] = useState({});
-    const [finalImports, setFinalImports] = useState([]);
-    const templateInfo = getTemplateInfo(code);
-    const { type, signers, args } = templateInfo;
+    const { type, signers } = templateInfo;
 
     const clear = () => {
         setResult();
@@ -84,7 +52,7 @@ const Runner = () => {
 
     useEffect(() => {
         if (query && query.code) {
-            updateScriptCode(Buffer.from(query.code, "base64").toString());
+            setCode(Buffer.from(query.code, "base64").toString());
         }
         if (
             query &&
@@ -93,137 +61,65 @@ const Runner = () => {
                 query.network === "mainnet" ||
                 query.network === "emulator")
         ) {
-            setNetwork(query.network);
+            switchNetwork(query.network);
         }
-    }, [query]);
+    }, [query, setCode, switchNetwork]);
 
-    const switchNetwork = (network) => {
-        clear();
-        fcl.unauthenticate();
-        configureForNetwork(network);
-        setNetwork(network);
-    };
-
-    const getTransactionLink = (txId) => {
-        if (network === "emulator") {
-            return undefined;
+    const getButtonLabel = () => {
+        if (type === "contract") {
+            return "Not Supported";
         }
-        let baseUrl = `https://flowscan.org`;
-        if (network === "testnet") {
-            baseUrl = `https://testnet.flowscan.org`;
+        if (signers > 1) {
+            // TODO: Implement multisig
+            return "Multisig is not Supported";
         }
-        return `${baseUrl}/transaction/${txId}`;
-    };
-
-    // METHDOS
-    const updateImports = async () => {
-        const env = await getEnvironment(network);
-        const newCode = replaceImportAddresses(code, env);
-        updateScriptCode(newCode);
+        return buttonLabels[type];
     };
 
     const send = async () => {
         clear();
-        await setEnvironment(network);
-        extendEnvironment(registry);
         setRunning(true);
-
-        switch (type) {
-            // Script Handling
-            case "script": {
-                const [result, scriptError] = await executeScript({ code });
-                setRunning(false);
-                if (!scriptError) {
-                    setResult(result);
-                    setError();
-                } else {
-                    setResult();
-                    setError(scriptError.toString());
-                    console.error(scriptError);
-                }
-                break;
+        if (type === "script") {
+            const [result, scriptError] = await executeScript({ code });
+            setRunning(false);
+            if (!scriptError) {
+                setResult(result);
+                setError();
+            } else {
+                setResult();
+                setError(scriptError.toString());
+                console.error(scriptError);
+            }
+        } else if (type === "transaction") {
+            if (!fcl.currentUser()) {
+                await fcl.authenticate();
             }
 
-            // Transaction Handling
-            case "transaction": {
-                if (!fcl.currentUser()) {
-                    await fcl.authenticate();
-                }
-
-                const [result, txError] = await sendTransaction({
-                    code,
-                    limit: 9999,
-                    payer: fcl.authz,
-                });
-                setRunning(false);
-                if (!txError) {
-                    setResult(result);
-                    setError();
-                } else {
-                    setResult();
-                    setError(txError.toString());
-                    console.error(txError);
-                }
-                break;
+            const [result, txError] = await sendTransaction({
+                code,
+                limit: 9999,
+                payer: fcl.authz,
+            });
+            setRunning(false);
+            if (!txError) {
+                setResult(result);
+                setError();
+            } else {
+                setResult();
+                setError(txError.toString());
+                console.error(txError);
             }
-
-            default:
-                break;
+        } else {
+            setError("Not Supported");
         }
     };
-
-    // EFFECTS
-    useEffect(() => {
-        fcl.unauthenticate();
-        fcl.currentUser().subscribe(setUser);
-        const getRegistry = async () => {
-            const data = await fetchCatalogContractAndAddresses();
-            const registry = prepareEnvironments(data);
-            extendEnvironment(registry);
-            setRegistry(registry);
-        };
-        getRegistry();
-    }, []);
-
-    useEffect(() => {
-        setEnvironment(network);
-        if (registry !== null) {
-            extendEnvironment(registry);
-        }
-    }, [network, registry]);
-
-    useEffect(() => {
-        const getImports = debounce(async () => {
-            const list = extractImports(code);
-            setImportList(list);
-        }, 300);
-        getImports(code, setImportList);
-    }, [code]);
-
-    useEffect(() => {
-        const prepareFinalImports = async () => {
-            const env = await getEnvironment();
-            const replacedList = {};
-            for (const key in importList) {
-                replacedList[key] = env[key];
-            }
-            const finalList = Object.keys(replacedList).map((key) => {
-                return {
-                    name: key,
-                    address: replacedList[key],
-                };
-            });
-            setFinalImports(finalList);
-        };
-        prepareFinalImports(importList);
-    }, [importList, network]);
 
     const fclAble =
         user?.addr && signers && signers === 1 && type === "transaction";
     const disabled =
         type === "unknown" ||
         type === "contract" ||
-        !monacoReady ||
+        !editorReady ||
         signers > 1;
 
     return (
@@ -290,7 +186,7 @@ const Runner = () => {
                                     <a
                                         onClick={() => {
                                             clear();
-                                            updateScriptCode(baseScript);
+                                            setCode(baseScript);
                                         }}
                                     >
                                         Script
@@ -300,7 +196,7 @@ const Runner = () => {
                                     <a
                                         onClick={() => {
                                             clear();
-                                            updateScriptCode(baseTransaction);
+                                            setCode(baseTransaction);
                                         }}
                                     >
                                         Transaction
@@ -363,24 +259,17 @@ const Runner = () => {
                             disabled={disabled}
                             aria-busy={running}
                         >
-                            {getButtonLabel(type, signers)}
+                            {getButtonLabel()}
                         </button>
                     </li>
                 </ul>
             </nav>
             <CadenceChecker>
                 <div className="cadence-container">
-                    <CadenceEditor
-                        className={"mb-2"}
-                        onReady={() => {
-                            setMonacoReady(true);
-                        }}
-                        code={code}
-                        updateCode={updateScriptCode}
-                    />
+                    <CadenceEditor className={"mb-2"} />
                 </div>
             </CadenceChecker>
-            {!monacoReady && (
+            {!editorReady && (
                 <dialog open>
                     <article>
                         <progress indeterminate="true"></progress>
@@ -388,7 +277,7 @@ const Runner = () => {
                     </article>
                 </dialog>
             )}
-            {monacoReady && (
+            {editorReady && (
                 <article className={result ? "success" : error ? "error" : ""}>
                     <header aria-busy={running}>
                         {capitalize(type)} Result

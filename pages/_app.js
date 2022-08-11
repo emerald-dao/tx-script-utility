@@ -2,14 +2,22 @@ import "@picocss/pico";
 import "../styles/globals.css";
 import React from "react";
 import { IconContext } from "react-icons";
+import CodeProvider from "../contexts/CodeContext";
+import FlowProvider from "../contexts/FlowContext";
 
 const MyApp = ({ Component, pageProps }) => {
     return (
         <div>
             <main className="container">
-                <IconContext.Provider value={{ className: "react-icons" }}>
-                    <Component {...pageProps} />
-                </IconContext.Provider>
+                <FlowProvider>
+                    <CodeProvider>
+                        <IconContext.Provider
+                            value={{ className: "react-icons" }}
+                        >
+                            <Component {...pageProps} />
+                        </IconContext.Provider>
+                    </CodeProvider>
+                </FlowProvider>
             </main>
             <footer className="container">
                 <p>

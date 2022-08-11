@@ -1,11 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import * as fcl from "@onflow/fcl";
 import { configureForNetwork } from "../flow/config";
-import {
-    fetchCatalogContractAndAddresses,
-    prepareEnvironments,
-} from "../utils";
+import { prepareEnvironments } from "../utils";
 import { extendEnvironment, setEnvironment } from "@onflow/flow-cadut";
+import axios from "axios";
 
 export const FlowContext = createContext({});
 export const useFlow = () => useContext(FlowContext);
@@ -36,10 +34,14 @@ const FlowProvider = ({ children }) => {
         fcl.unauthenticate();
         fcl.currentUser().subscribe(setUser);
         const getRegistry = async () => {
-            const data = await fetchCatalogContractAndAddresses();
-            const registry = prepareEnvironments(data);
-            extendEnvironment(registry);
-            setRegistry(registry);
+            try {
+                const data = await axios.get("/api/registry");
+                const registry = prepareEnvironments(data);
+                extendEnvironment(registry);
+                setRegistry(registry);
+            } catch (error) {
+                console.error(error);
+            }
         };
         getRegistry();
     }, []);

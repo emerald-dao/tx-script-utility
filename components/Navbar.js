@@ -5,7 +5,17 @@ import { useCode } from "../contexts/CodeContext";
 import { useFlow } from "../contexts/FlowContext";
 import * as fcl from "@onflow/fcl";
 import { capitalize } from "../utils";
-import { FaGlobe, FaBook, FaBars, FaInfo } from "react-icons/fa";
+import {
+    FaGlobe,
+    FaBook,
+    FaBars,
+    FaInfo,
+    FaPen,
+    FaCopy,
+    FaTrash,
+    FaUser,
+    FaUserSlash,
+} from "react-icons/fa";
 import { isMobile } from "react-device-detect";
 
 function copyToClipboard(text) {
@@ -47,6 +57,57 @@ const Navbar = () => {
         type === "contract" ||
         !editorReady ||
         signers > 1;
+
+    const options = (
+        <>
+            <li>
+                <a
+                    data-tooltip={user?.addr ? "Sign out" : "Sign in"}
+                    onClick={() =>
+                        user?.addr ? fcl.unauthenticate() : fcl.authenticate()
+                    }
+                >
+                    {user?.addr ? <FaUserSlash /> : <FaUser />}
+                    {isMobile && (user?.addr ? " Sign Out" : " Sign In")}
+                </a>
+            </li>
+            <li>
+                <a
+                    data-tooltip="Update contract address imports in code"
+                    onClick={async () => {
+                        await updateImports();
+                    }}
+                >
+                    <FaPen />
+                    {isMobile && " Update Imports"}
+                </a>
+            </li>
+            <li>
+                <a
+                    data-tooltip="Copy a link to this code"
+                    onClick={() => {
+                        copyToClipboard(
+                            `${window.location.host}?code=${Buffer.from(
+                                code
+                            ).toString("base64")}&network=${network}`
+                        );
+                    }}
+                >
+                    <FaCopy />
+                    {isMobile && " Copy Link"}
+                </a>
+            </li>
+            <li>
+                <a
+                    data-tooltip="Clear results/errors"
+                    onClick={() => clearResults()}
+                >
+                    <FaTrash />
+                    {isMobile && " Clear"}
+                </a>
+            </li>
+        </>
+    );
 
     return (
         <nav className="container header">
@@ -96,7 +157,7 @@ const Navbar = () => {
             </ul>
             <ul>
                 <li>
-                    <details role="list" dir="rtl">
+                    <details role="list">
                         <summary role="link">
                             <div className="centered-label">
                                 <FaBook />
@@ -126,57 +187,20 @@ const Navbar = () => {
                         </ul>
                     </details>
                 </li>
-                <li>
-                    <details role="list" dir="rtl">
-                        <summary role="link">
-                            <div className="centered-label">
-                                <FaBars />
-                            </div>
-                        </summary>
-                        <ul role="listbox">
-                            <li>
-                                <a
-                                    onClick={() =>
-                                        user?.addr
-                                            ? fcl.unauthenticate()
-                                            : fcl.authenticate()
-                                    }
-                                >
-                                    {user?.addr ? "Logout" : "Login"}
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    onClick={async () => {
-                                        await updateImports();
-                                    }}
-                                >
-                                    Update Imports
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    onClick={() => {
-                                        copyToClipboard(
-                                            `${
-                                                window.location.host
-                                            }?code=${Buffer.from(code).toString(
-                                                "base64"
-                                            )}&network=${network}`
-                                        );
-                                    }}
-                                >
-                                    Copy Link To Code
-                                </a>
-                            </li>
-                            <li>
-                                <a onClick={() => clearResults()}>
-                                    Clear Results
-                                </a>
-                            </li>
-                        </ul>
-                    </details>
-                </li>
+                {isMobile ? (
+                    <li>
+                        <details role="list">
+                            <summary role="link">
+                                <div className="centered-label">
+                                    <FaBars />
+                                </div>
+                            </summary>
+                            <ul role="listbox">{options}</ul>
+                        </details>
+                    </li>
+                ) : (
+                    options
+                )}
                 <li>
                     <button
                         role="button"

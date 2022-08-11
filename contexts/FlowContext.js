@@ -45,10 +45,13 @@ const FlowProvider = ({ children }) => {
     }, []);
 
     useEffect(() => {
-        setEnvironment(network);
-        if (registry !== null) {
-            extendEnvironment(registry);
-        }
+        const setRegistry = async () => {
+            await setEnvironment(network);
+            if (registry !== null) {
+                extendEnvironment(registry);
+            }
+        };
+        setRegistry();
     }, [network, registry]);
 
     const value = { network, switchNetwork, getTransactionLink, user };

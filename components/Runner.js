@@ -31,6 +31,7 @@ import {
     FaLink,
     FaInfo,
 } from "react-icons/fa";
+import { isMobile } from "react-device-detect";
 
 const CadenceChecker = dynamic(() => import("./LSP/CadenceChecker"), {
     ssr: false,
@@ -229,9 +230,11 @@ const Runner = () => {
         <>
             <nav className="container header">
                 <ul>
-                    <li>
-                        <h1>Flow Runner</h1>
-                    </li>
+                    {!isMobile && (
+                        <li>
+                            <h1>Flow Runner</h1>
+                        </li>
+                    )}
                     <li>
                         <details role="list">
                             <summary

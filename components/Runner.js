@@ -22,7 +22,9 @@ const Runner = () => {
 
     useEffect(() => {
         if (query && query.code) {
-            setCode(Buffer.from(query.code, "base64").toString());
+            setCode(
+                Buffer.from(decodeURIComponent(query.code), "base64").toString()
+            );
         }
         if (
             query &&

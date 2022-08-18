@@ -5,9 +5,11 @@ import {
     getTemplateInfo,
     replaceImportAddresses,
     sendTransaction,
+    splitArgs,
 } from "@onflow/flow-cadut";
 import React, { createContext, useContext, useState } from "react";
 import { baseScript } from "../templates/code";
+import { isJSON } from "../utils/types";
 import { useFlow } from "./FlowContext";
 
 export const CodeContext = createContext({});
@@ -22,7 +24,20 @@ const CodeProvider = ({ children }) => {
     const [result, setResult] = useState();
     const [error, setError] = useState();
     const templateInfo = getTemplateInfo(code);
-    const { type } = templateInfo;
+    const { type, args } = templateInfo;
+
+    const getOrderedArgValues = (finalArgs) => {
+        const argValues = [];
+        for (let arg of args.map((a) => splitArgs(a)[0])) {
+            let value = finalArgs[arg];
+            if (isJSON(value)) {
+                argValues.push(JSON.parse(value));
+            } else {
+                argValues.push(value);
+            }
+        }
+        return argValues;
+    };
 
     const updateImports = async () => {
         const env = await getEnvironment(network);
@@ -36,11 +51,15 @@ const CodeProvider = ({ children }) => {
         setRunning(false);
     };
 
-    const run = async () => {
+    const run = async (finalArgs) => {
         clearResults();
         setRunning(true);
+        const fclArgs = getOrderedArgValues(finalArgs);
         if (type === "script") {
-            const [scriptResult, scriptError] = await executeScript({ code });
+            const [scriptResult, scriptError] = await executeScript({
+                code,
+                args: fclArgs,
+            });
             setRunning(false);
             if (!scriptError) {
                 setResult(scriptResult);
@@ -56,6 +75,7 @@ const CodeProvider = ({ children }) => {
             }
             const [txResult, txError] = await sendTransaction({
                 code,
+                args: fclArgs,
                 limit: 9999,
                 payer: fcl.authz,
             });

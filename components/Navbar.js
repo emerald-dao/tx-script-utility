@@ -27,7 +27,7 @@ function copyToClipboard(text) {
     document.body.removeChild(dummy);
 }
 
-const Navbar = () => {
+const Navbar = ({ finalArgs }) => {
     const {
         code,
         setCode,
@@ -89,7 +89,11 @@ const Navbar = () => {
                         copyToClipboard(
                             `${window.location.host}?code=${encodeURIComponent(
                                 Buffer.from(code).toString("base64")
-                            )}&network=${network}`
+                            )}&network=${network}&args=${encodeURIComponent(
+                                Buffer.from(JSON.stringify(finalArgs)).toString(
+                                    "base64"
+                                )
+                            )}`
                         );
                     }}
                 >
@@ -205,7 +209,7 @@ const Navbar = () => {
                     <button
                         role="button"
                         onClick={async () => {
-                            await run();
+                            await run(finalArgs);
                         }}
                         disabled={disabled}
                         aria-busy={running}

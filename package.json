@@ -9,6 +9,9 @@
         "format:fix": "prettier --write --ignore-path .gitignore ."
     },
     "dependencies": {
+        "@jsonforms/core": "^3.0.0-rc.0",
+        "@jsonforms/react": "^3.0.0-rc.0",
+        "@jsonforms/vanilla-renderers": "^3.0.0-rc.0",
         "@onflow/cadence-language-server": "^0.24.3",
         "@onflow/fcl": "^1.2.0",
         "@onflow/flow-cadut": "^0.2.0-alpha.8",

@@ -1,6 +1,5 @@
 import React from "react";
 import Head from "next/head";
-import Navbar from "../components/Navbar";
 import Runner from "../components/Runner";
 
 const Home = () => {
@@ -15,7 +14,6 @@ const Home = () => {
                 <link rel="icon" href="/favicon.png" />
             </Head>
             <main>
-                <Navbar />
                 <Runner />
             </main>
         </div>

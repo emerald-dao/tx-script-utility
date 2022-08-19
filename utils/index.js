@@ -40,11 +40,11 @@ export const fetchCatalogContractAndAddresses = async () => {
 
 export const prepareEnvironments = (json) => {
     const { testnet, mainnet } = json;
-    const test = Object.keys(testnet).map((contract) => [
+    const test = Object.keys(testnet || {}).map((contract) => [
         contract,
         testnet[contract],
     ]);
-    const main = Object.keys(mainnet).map((contract) => [
+    const main = Object.keys(mainnet || {}).map((contract) => [
         contract,
         mainnet[contract],
     ]);

@@ -36,7 +36,7 @@ const FlowProvider = ({ children }) => {
         const getRegistry = async () => {
             try {
                 const data = await axios.get("/api/registry");
-                const registry = prepareEnvironments(data);
+                const registry = prepareEnvironments(data.data);
                 extendEnvironment(registry);
                 setRegistry(registry);
             } catch (error) {

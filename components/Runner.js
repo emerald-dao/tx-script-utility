@@ -214,10 +214,12 @@ const Runner = () => {
                                         theme="shapeshifter:inverted"
                                     />
                                 ) : (
-                                    <p>{result}</p>
+                                    <p className="display-linebreak">
+                                        {result}
+                                    </p>
                                 )
                             ) : (
-                                <p>{error}</p>
+                                <p className="display-linebreak">{error}</p>
                             )}
                         </article>
                     )}

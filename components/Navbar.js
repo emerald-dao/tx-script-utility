@@ -87,7 +87,9 @@ const Navbar = ({ finalArgs }) => {
                     data-tooltip="Copy a link to this code"
                     onClick={() => {
                         copyToClipboard(
-                            `${window.location.host}?code=${encodeURIComponent(
+                            `${
+                                window.location.origin
+                            }?code=${encodeURIComponent(
                                 Buffer.from(code).toString("base64")
                             )}&network=${network}&args=${encodeURIComponent(
                                 Buffer.from(JSON.stringify(finalArgs)).toString(

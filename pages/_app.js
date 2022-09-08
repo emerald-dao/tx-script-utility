@@ -1,6 +1,7 @@
 import "@picocss/pico";
 import "../styles/globals.css";
 import React from "react";
+export { reportWebVitals } from "next-axiom";
 import { IconContext } from "react-icons";
 import CodeProvider from "../contexts/CodeContext";
 import FlowProvider from "../contexts/FlowContext";

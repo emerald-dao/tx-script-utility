@@ -1,10 +1,15 @@
 const MonacoWebpackPlugin = require("monaco-editor-webpack-plugin");
 const nextTranspileModules = require("next-transpile-modules");
+const withPlugins = require("next-compose-plugins");
 const { withAxiom } = require("next-axiom");
 const withTM = nextTranspileModules(["monaco-editor", "@onflow/flow-cadut"]);
 
-module.exports = withAxiom(
-    withTM({
+module.exports = withPlugins(
+    [
+        [withAxiom, {}],
+        [withTM, {}],
+    ],
+    {
         reactStrictMode: true,
         outputFileTracing: false,
         webpack: (config) => {
@@ -21,5 +26,5 @@ module.exports = withAxiom(
             );
             return config;
         },
-    })
+    }
 );

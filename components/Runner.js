@@ -109,6 +109,35 @@ const Runner = () => {
     return (
         <>
             <Navbar finalArgs={argData} />
+            {args?.length > 0 && (
+                <article className={argSchema ? "" : "error"}>
+                    <header>{capitalize(type)} Arguments</header>
+                    {argSchema ? (
+                        <JsonForms
+                            schema={argSchema}
+                            uischema={generateDefaultUISchema(argSchema)}
+                            data={argData}
+                            renderers={vanillaRenderers}
+                            cells={vanillaCells}
+                            additionalErrors={argErrors}
+                            onChange={({ data }) => setArgData(data)}
+                        />
+                    ) : (
+                        <p>
+                            Invalid Arguments: Ensure the arugments in your code
+                            are of valid{" "}
+                            <a
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                href="https://developers.flow.com/cadence/language/values-and-types"
+                            >
+                                Cadence types
+                            </a>
+                            .
+                        </p>
+                    )}
+                </article>
+            )}
             <CadenceChecker>
                 <div className="cadence-container">
                     <CadenceEditor className={"mb-2"} />
@@ -123,37 +152,6 @@ const Runner = () => {
                 </dialog>
             ) : (
                 <>
-                    {args?.length > 0 && (
-                        <article className={argSchema ? "" : "error"}>
-                            <header>{capitalize(type)} Arguments</header>
-                            {argSchema ? (
-                                <JsonForms
-                                    schema={argSchema}
-                                    uischema={generateDefaultUISchema(
-                                        argSchema
-                                    )}
-                                    data={argData}
-                                    renderers={vanillaRenderers}
-                                    cells={vanillaCells}
-                                    additionalErrors={argErrors}
-                                    onChange={({ data }) => setArgData(data)}
-                                />
-                            ) : (
-                                <p>
-                                    Invalid Arguments: Ensure the arugments in
-                                    your code are of valid{" "}
-                                    <a
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        href="https://developers.flow.com/cadence/language/values-and-types"
-                                    >
-                                        Cadence types
-                                    </a>
-                                    .
-                                </p>
-                            )}
-                        </article>
-                    )}
                     {showResults && (
                         <article
                             className={

@@ -73,21 +73,34 @@ const CodeProvider = ({ children }) => {
             if (!fcl.currentUser()) {
                 await fcl.authenticate();
             }
-            const [txResult, txError] = await sendTransaction({
+            const [txId, txError] = await sendTransaction({
                 code,
                 args: fclArgs,
                 limit: 9999,
                 payer: fcl.authz,
+                // Cadut is weird and doesn't poll right.
+                wait: false,
             });
-            setRunning(false);
-            if (!txError) {
-                setResult(txResult);
-                setError();
-            } else {
+            if (txError) {
                 setResult();
                 setError(txError.toString());
                 console.error(txError);
+            } else {
+                try {
+                    const rawResult = await fcl.tx(txId).onceSealed();
+                    const txResult = {
+                        txId,
+                        ...rawResult,
+                    };
+                    setResult(txResult);
+                    setError();
+                } catch (err) {
+                    setResult();
+                    setError(err.toString());
+                    console.error(err);
+                }
             }
+            setRunning(false);
         } else {
             setError("Not Supported.");
         }

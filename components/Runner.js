@@ -162,15 +162,11 @@ const Runner = () => {
                                 {capitalize(type)} Result
                                 {result &&
                                 type === "transaction" &&
-                                getTransactionLink(
-                                    result.txId.transactionId
-                                ) ? (
+                                getTransactionLink(result.txId) ? (
                                     <a
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        href={getTransactionLink(
-                                            result.txId.transactionId
-                                        )}
+                                        href={getTransactionLink(result.txId)}
                                     >
                                         &nbsp;
                                         <FaLink />

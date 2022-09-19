@@ -95,6 +95,9 @@ const checkJSON = (value, type) => {
 };
 
 export const validateByType = (value, type) => {
+    if (!type) {
+        return null;
+    }
     switch (true) {
         // Strings
         case type === "String": {

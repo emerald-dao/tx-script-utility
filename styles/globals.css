@@ -178,3 +178,7 @@ footer.container {
 .display-linebreak {
   white-space: pre;
 }
+
+.display-linebreak {
+  overflow-x: auto;
+}

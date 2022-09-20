@@ -208,12 +208,14 @@ const Runner = () => {
                                         theme="shapeshifter:inverted"
                                     />
                                 ) : (
-                                    <p className="display-linebreak">
+                                    <p className="display-linebreak wrap-text">
                                         {result}
                                     </p>
                                 )
                             ) : (
-                                <p className="display-linebreak">{error}</p>
+                                <p className="display-linebreak wrap-text">
+                                    {error}
+                                </p>
                             )}
                         </article>
                     )}

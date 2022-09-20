@@ -174,6 +174,22 @@ const Navbar = ({ finalArgs }) => {
                                 <a
                                     onClick={() => {
                                         clearResults();
+                                        const savedCode = Buffer.from(
+                                            window.sessionStorage.getItem(
+                                                "autoSavedCode"
+                                            ) || "",
+                                            "base64"
+                                        ).toString();
+                                        setCode(savedCode);
+                                    }}
+                                >
+                                    Last Code
+                                </a>
+                            </li>
+                            <li>
+                                <a
+                                    onClick={() => {
+                                        clearResults();
                                         setCode(baseScript);
                                     }}
                                 >

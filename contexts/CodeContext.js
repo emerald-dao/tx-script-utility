@@ -7,7 +7,7 @@ import {
     sendTransaction,
     splitArgs,
 } from "@onflow/flow-cadut";
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { baseScript } from "../templates/code";
 import { isJSON } from "../utils/types";
 import { useFlow } from "./FlowContext";
@@ -17,7 +17,7 @@ export const useCode = () => useContext(CodeContext);
 
 const CodeProvider = ({ children }) => {
     const { network } = useFlow();
-    const [code, setCode] = useState(baseScript);
+    const [code, setCode] = useState("");
     const [readOnly, setReadOnly] = useState(false);
     const [editorReady, setEditorReady] = useState(false);
     const [running, setRunning] = useState(false);
@@ -52,6 +52,7 @@ const CodeProvider = ({ children }) => {
     };
 
     const run = async (finalArgs) => {
+        autoSaveCodeToSession();
         clearResults();
         setRunning(true);
         const fclArgs = getOrderedArgValues(finalArgs);
@@ -105,6 +106,49 @@ const CodeProvider = ({ children }) => {
             setError("Not Supported.");
         }
     };
+
+    const autoSaveCodeToSession = () => {
+        try {
+            window.sessionStorage.setItem(
+                "autoSavedCode",
+                Buffer.from(code).toString("base64")
+            );
+        } catch (e) {}
+    };
+
+    const getDefaultCode = () => {
+        const savedCode = window.sessionStorage.getItem("autoSavedCode");
+        if (savedCode) {
+            return Buffer.from(savedCode, "base64").toString();
+        } else {
+            return baseScript;
+        }
+    };
+
+    useEffect(() => {
+        setCode(getDefaultCode());
+    }, []);
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            const savedCode =
+                window.sessionStorage.getItem("autoSavedCode") || "";
+            if (savedCode === Buffer.from(code).toString("base64")) {
+                return;
+            } else {
+                try {
+                    window.sessionStorage.setItem(
+                        "autoSavedCode",
+                        Buffer.from(code).toString("base64")
+                    );
+                } catch (e) {}
+            }
+        }, 10000);
+
+        return () => {
+            clearInterval(intervalId);
+        };
+    });
 
     const value = {
         code,

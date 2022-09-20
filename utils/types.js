@@ -28,9 +28,9 @@ const mapToSchema = (type) => {
         // Maps
         // Arrays
         // Paths
-        case type === "String" ||
-            type === "Address" ||
-            startsWith(type, "Word") ||
+        case type.startsWith("String") ||
+            type.startsWith("Address") ||
+            type.startsWith("Word") ||
             isComplexType(type): {
             return { type: "string" };
         }
@@ -52,7 +52,7 @@ const mapToSchema = (type) => {
         }
 
         // Booleans
-        case type === "Bool": {
+        case type.startsWith("Bool"): {
             return {
                 type: "boolean",
             };
@@ -100,7 +100,7 @@ export const validateByType = (value, type) => {
     }
     switch (true) {
         // Strings
-        case type === "String": {
+        case type.startsWith("String"): {
             return null; // no need to validate String for now
         }
 
@@ -134,7 +134,7 @@ export const validateByType = (value, type) => {
         }
 
         // Address
-        case type === "Address": {
+        case type.startsWith("Address"): {
             if (!value.match(/(^0x[\w\d]{16})|(^0x[\w\d]{1,4})/)) {
                 return "Not a valid Address";
             }
@@ -142,7 +142,7 @@ export const validateByType = (value, type) => {
         }
 
         // Booleans
-        case type === "Bool": {
+        case type.startsWith("Bool"): {
             if (value !== "true" && value !== "false") {
                 return "Boolean values can be either true or false";
             }

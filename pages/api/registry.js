@@ -7,6 +7,7 @@ const internalRegistry = {
         FungibleToken: "0x9a0766d93b6608b7",
         FlowToken: "0x7e60df042a9c0868",
         NFTCatalog: "0x324c34e1c517e4db",
+        NFTCatalogAdmin: "0x324c34e1c517e4db",
         NFTRetrieval: "0x324c34e1c517e4db",
     },
     mainnet: {
@@ -15,6 +16,7 @@ const internalRegistry = {
         FungibleToken: "0xf233dcee88fe0abe",
         FlowToken: "0x7e60df042a9c0868",
         NFTCatalog: "0x49a7cda3a1eecc29",
+        NFTCatalogAdmin: "0x49a7cda3a1eecc29",
         NFTRetrieval: "0x49a7cda3a1eecc29",
     },
 };

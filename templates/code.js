@@ -5,14 +5,6 @@ pub fun main():Int {
 }
 `.slice(1); // remove new line at the bof
 
-export const flovatarTotalSupply = `
-import Flovatar from 0x01
-
-pub fun main():UInt64{
-  return Flovatar.totalSupply
-}
-`.slice(1); // remove new line at the bof
-
 export const baseTransaction = `
 // This is the most basic transaction you can execute on Flow Network
 transaction() {
@@ -22,5 +14,16 @@ transaction() {
   execute {
     
   }
+}
+`.slice(1); // remove new line at the bof
+
+export const getTxScript = `
+import TransactionGeneration from "0xTransactionGeneration"
+
+pub fun main(tx: String, collectionIdentifier: String, vaultIdentifier: String) : String {
+    return TransactionGeneration.getTx(tx: tx, params: {
+        "collectionIdentifier": collectionIdentifier,
+        "vaultIdentifier": vaultIdentifier
+    })!
 }
 `.slice(1); // remove new line at the bof

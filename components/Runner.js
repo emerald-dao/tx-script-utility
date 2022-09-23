@@ -108,7 +108,7 @@ const Runner = () => {
 
     return (
         <>
-            <Navbar finalArgs={argData} />
+            <Navbar argData={argData} setArgData={setArgData} />
             {args?.length > 0 && (
                 <article className={argSchema ? "" : "error"}>
                     <header>{capitalize(type)} Arguments</header>

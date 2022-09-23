@@ -12,6 +12,7 @@ const FlowProvider = ({ children }) => {
     const [network, setNetwork] = useState("testnet");
     const [user, setUser] = useState();
     const [registry, setRegistry] = useState(null);
+    const [templates, setTemplates] = useState([]);
 
     const switchNetwork = (network) => {
         fcl.unauthenticate();
@@ -43,7 +44,17 @@ const FlowProvider = ({ children }) => {
                 console.error(error);
             }
         };
+
+        const getTemplates = async () => {
+            try {
+                const data = await axios.get("/api/templates");
+                setTemplates(data.data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
         getRegistry();
+        getTemplates();
     }, []);
 
     useEffect(() => {
@@ -56,7 +67,13 @@ const FlowProvider = ({ children }) => {
         setRegistry();
     }, [network, registry]);
 
-    const value = { network, switchNetwork, getTransactionLink, user };
+    const value = {
+        network,
+        switchNetwork,
+        getTransactionLink,
+        user,
+        templates,
+    };
 
     return (
         <FlowContext.Provider value={value}>{children}</FlowContext.Provider>

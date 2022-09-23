@@ -1,13 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { buttonLabels } from "../templates/labels";
-import { baseScript, baseTransaction } from "../templates/code";
 import { useCode } from "../contexts/CodeContext";
 import { useFlow } from "../contexts/FlowContext";
 import * as fcl from "@onflow/fcl";
 import { capitalize } from "../utils";
 import {
     FaGlobe,
-    FaBook,
     FaBars,
     FaInfo,
     FaPen,
@@ -15,8 +13,10 @@ import {
     FaTrash,
     FaUser,
     FaUserSlash,
+    FaCode,
 } from "react-icons/fa";
 import { isMobile } from "react-device-detect";
+import CadenceTemplates from "./CadenceTemplates";
 
 function copyToClipboard(text) {
     var dummy = document.createElement("textarea");
@@ -27,10 +27,9 @@ function copyToClipboard(text) {
     document.body.removeChild(dummy);
 }
 
-const Navbar = ({ finalArgs }) => {
+const Navbar = ({ argData, setArgData }) => {
     const {
         code,
-        setCode,
         clearResults,
         editorReady,
         updateImports,
@@ -39,6 +38,7 @@ const Navbar = ({ finalArgs }) => {
         running,
     } = useCode();
     const { network, switchNetwork, user } = useFlow();
+    const [modal, setModal] = useState(false);
     const { type, signers } = templateInfo;
 
     const getButtonLabel = () => {
@@ -60,6 +60,16 @@ const Navbar = ({ finalArgs }) => {
 
     const options = (
         <>
+            <li>
+                <a
+                    data-tooltip="Cadence Templates"
+                    data-target="templates"
+                    onClick={() => setModal(!modal)}
+                >
+                    <FaCode />
+                    {isMobile && " Templates"}
+                </a>
+            </li>
             <li>
                 <a
                     data-tooltip={user?.addr ? "Sign out" : "Sign in"}
@@ -92,7 +102,7 @@ const Navbar = ({ finalArgs }) => {
                             }?code=${encodeURIComponent(
                                 Buffer.from(code).toString("base64")
                             )}&network=${network}&args=${encodeURIComponent(
-                                Buffer.from(JSON.stringify(finalArgs)).toString(
+                                Buffer.from(JSON.stringify(argData)).toString(
                                     "base64"
                                 )
                             )}`
@@ -116,127 +126,91 @@ const Navbar = ({ finalArgs }) => {
     );
 
     return (
-        <nav className="container header">
-            <ul>
-                {!isMobile && (
-                    <li>
-                        <h1>Flow Runner</h1>
-                    </li>
-                )}
-                <li>
-                    <details role="list">
-                        <summary
-                            aria-haspopup="listbox"
-                            role="button"
-                            className="contrast outline"
-                        >
-                            <div className="centered-label">
-                                <FaGlobe />
-                                &nbsp;
-                                {capitalize(network)}
-                                {network === "emulator" && (
-                                    <p data-tooltip="You must be running a local emulator (on :8888) and/or dev wallet (on :8701/fcl/authn)">
-                                        <FaInfo />
-                                    </p>
-                                )}
-                            </div>
-                        </summary>
-                        <ul role="listbox">
-                            <li>
-                                <a onClick={() => switchNetwork("testnet")}>
-                                    Testnet
-                                </a>
-                            </li>
-                            <li>
-                                <a onClick={() => switchNetwork("mainnet")}>
-                                    Mainnet
-                                </a>
-                            </li>
-                            <li>
-                                <a onClick={() => switchNetwork("emulator")}>
-                                    Emulator
-                                </a>
-                            </li>
-                        </ul>
-                    </details>
-                </li>
-            </ul>
-            <ul>
-                <li>
-                    <details role="list">
-                        <summary role="link">
-                            <div className="centered-label">
-                                <FaBook />
-                            </div>
-                        </summary>
-                        <ul role="listbox">
-                            <li>
-                                <a
-                                    onClick={() => {
-                                        clearResults();
-                                        const savedCode = Buffer.from(
-                                            window.sessionStorage.getItem(
-                                                "autoSavedCode"
-                                            ) || "",
-                                            "base64"
-                                        ).toString();
-                                        setCode(savedCode);
-                                    }}
-                                >
-                                    Last Code
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    onClick={() => {
-                                        clearResults();
-                                        setCode(baseScript);
-                                    }}
-                                >
-                                    Script
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    onClick={() => {
-                                        clearResults();
-                                        setCode(baseTransaction);
-                                    }}
-                                >
-                                    Transaction
-                                </a>
-                            </li>
-                        </ul>
-                    </details>
-                </li>
-                {isMobile ? (
+        <>
+            <CadenceTemplates
+                modal={modal}
+                setModal={setModal}
+                setArgData={setArgData}
+            />
+            <nav className="container header">
+                <ul>
+                    {!isMobile && (
+                        <li>
+                            <h1>Flow Runner</h1>
+                        </li>
+                    )}
                     <li>
                         <details role="list">
-                            <summary role="link">
+                            <summary
+                                aria-haspopup="listbox"
+                                role="button"
+                                className="contrast outline"
+                            >
                                 <div className="centered-label">
-                                    <FaBars />
+                                    <FaGlobe />
+                                    &nbsp;
+                                    {capitalize(network)}
+                                    {network === "emulator" && (
+                                        <p data-tooltip="You must be running a local emulator (on :8888) and/or dev wallet (on :8701/fcl/authn)">
+                                            <FaInfo />
+                                        </p>
+                                    )}
                                 </div>
                             </summary>
-                            <ul role="listbox">{options}</ul>
+                            <ul role="listbox">
+                                <li>
+                                    <a onClick={() => switchNetwork("testnet")}>
+                                        Testnet
+                                    </a>
+                                </li>
+                                <li>
+                                    <a onClick={() => switchNetwork("mainnet")}>
+                                        Mainnet
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        onClick={() =>
+                                            switchNetwork("emulator")
+                                        }
+                                    >
+                                        Emulator
+                                    </a>
+                                </li>
+                            </ul>
                         </details>
                     </li>
-                ) : (
-                    options
-                )}
-                <li>
-                    <button
-                        role="button"
-                        onClick={async () => {
-                            await run(finalArgs);
-                        }}
-                        disabled={disabled}
-                        aria-busy={running}
-                    >
-                        {getButtonLabel()}
-                    </button>
-                </li>
-            </ul>
-        </nav>
+                </ul>
+                <ul>
+                    {isMobile ? (
+                        <li>
+                            <details role="list">
+                                <summary role="link">
+                                    <div className="centered-label">
+                                        <FaBars />
+                                    </div>
+                                </summary>
+                                <ul role="listbox">{options}</ul>
+                            </details>
+                        </li>
+                    ) : (
+                        options
+                    )}
+                    <li>
+                        <button
+                            role="button"
+                            onClick={async () => {
+                                await run(argData);
+                            }}
+                            disabled={disabled}
+                            aria-busy={running}
+                        >
+                            {getButtonLabel()}
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </>
     );
 };
 

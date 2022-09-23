@@ -9,6 +9,11 @@ const internalRegistry = {
         NFTCatalog: "0x324c34e1c517e4db",
         NFTCatalogAdmin: "0x324c34e1c517e4db",
         NFTRetrieval: "0x324c34e1c517e4db",
+        ArrayUtils: "0x44051d81c4720882",
+        StringUtils: "0x44051d81c4720882",
+        TransactionGenerationUtils: "0x44051d81c4720882",
+        TransactionTemplates: "0x44051d81c4720882",
+        TransactionGeneration: "0x44051d81c4720882",
     },
     mainnet: {
         NonFungibleToken: "0x1d7e57aa55817448",
@@ -18,6 +23,11 @@ const internalRegistry = {
         NFTCatalog: "0x49a7cda3a1eecc29",
         NFTCatalogAdmin: "0x49a7cda3a1eecc29",
         NFTRetrieval: "0x49a7cda3a1eecc29",
+        ArrayUtils: "0xe52522745adf5c34",
+        StringUtils: "0xe52522745adf5c34",
+        TransactionGenerationUtils: "0xe52522745adf5c34",
+        TransactionTemplates: "0xe52522745adf5c34",
+        TransactionGeneration: "0xe52522745adf5c34",
     },
 };
 

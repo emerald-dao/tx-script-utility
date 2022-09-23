@@ -3,7 +3,7 @@ import { buttonLabels } from "../templates/labels";
 import { useCode } from "../contexts/CodeContext";
 import { useFlow } from "../contexts/FlowContext";
 import * as fcl from "@onflow/fcl";
-import { capitalize } from "../utils";
+import { capitalize, copyToClipboard } from "../utils";
 import {
     FaGlobe,
     FaBars,
@@ -17,15 +17,6 @@ import {
 } from "react-icons/fa";
 import { isMobile } from "react-device-detect";
 import CadenceTemplates from "./CadenceTemplates";
-
-function copyToClipboard(text) {
-    var dummy = document.createElement("textarea");
-    document.body.appendChild(dummy);
-    dummy.value = text;
-    dummy.select();
-    document.execCommand("copy");
-    document.body.removeChild(dummy);
-}
 
 const Navbar = ({ argData, setArgData }) => {
     const {

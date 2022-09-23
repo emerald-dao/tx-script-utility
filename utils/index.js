@@ -62,3 +62,12 @@ export const prepareEnvironments = (json) => {
 
 // String helper function
 export const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+
+export function copyToClipboard(text) {
+    var dummy = document.createElement("textarea");
+    document.body.appendChild(dummy);
+    dummy.value = text;
+    dummy.select();
+    document.execCommand("copy");
+    document.body.removeChild(dummy);
+}

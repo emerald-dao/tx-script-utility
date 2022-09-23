@@ -5,8 +5,8 @@ import CadenceEditor from "./CadenceEditor";
 import { useCode } from "../contexts/CodeContext";
 import { useFlow } from "../contexts/FlowContext";
 import * as fcl from "@onflow/fcl";
-import { capitalize } from "../utils";
-import { FaCheck, FaExclamationTriangle, FaLink } from "react-icons/fa";
+import { capitalize, copyToClipboard } from "../utils";
+import { FaCheck, FaCopy, FaExclamationTriangle, FaLink } from "react-icons/fa";
 import { vanillaCells, vanillaRenderers } from "@jsonforms/vanilla-renderers";
 import { JsonForms } from "@jsonforms/react";
 import { generateDefaultUISchema } from "@jsonforms/core";
@@ -174,6 +174,24 @@ const Runner = () => {
                                 ) : (
                                     ""
                                 )}
+                                <span
+                                    className="note right"
+                                    data-tooltip="Copy results"
+                                >
+                                    &nbsp;
+                                    <a
+                                        onClick={() =>
+                                            result &&
+                                            copyToClipboard(
+                                                typeof result === "object"
+                                                    ? JSON.stringify(result)
+                                                    : result
+                                            )
+                                        }
+                                    >
+                                        <FaCopy />
+                                    </a>
+                                </span>
                                 {type === "transaction" && (
                                     <span className="note right">
                                         {user?.addr ? (

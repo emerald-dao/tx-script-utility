@@ -14,9 +14,11 @@ import {
     FaUser,
     FaUserSlash,
     FaCode,
+    FaBook,
 } from "react-icons/fa";
 import { isMobile } from "react-device-detect";
 import CadenceTemplates from "./CadenceTemplates";
+import InteractionTemplates from "./InteractionTemplates";
 
 const Navbar = ({ argData, setArgData }) => {
     const {
@@ -29,7 +31,8 @@ const Navbar = ({ argData, setArgData }) => {
         running,
     } = useCode();
     const { network, switchNetwork, user } = useFlow();
-    const [modal, setModal] = useState(false);
+    const [ixModal, setIxModal] = useState(false);
+    const [cadenceModal, setCadenceModal] = useState(false);
     const { type, signers } = templateInfo;
 
     const getButtonLabel = () => {
@@ -53,12 +56,20 @@ const Navbar = ({ argData, setArgData }) => {
         <>
             <li>
                 <a
+                    data-tooltip="Interaction Templates"
+                    onClick={() => setIxModal(!ixModal)}
+                >
+                    <FaBook />
+                    {isMobile && " Interaction Templates"}
+                </a>
+            </li>
+            <li>
+                <a
                     data-tooltip="Cadence Templates"
-                    data-target="templates"
-                    onClick={() => setModal(!modal)}
+                    onClick={() => setCadenceModal(!cadenceModal)}
                 >
                     <FaCode />
-                    {isMobile && " Templates"}
+                    {isMobile && " Cadence Templates"}
                 </a>
             </li>
             <li>
@@ -118,9 +129,14 @@ const Navbar = ({ argData, setArgData }) => {
 
     return (
         <>
+            <InteractionTemplates
+                modal={ixModal}
+                setModal={setIxModal}
+                setArgData={setArgData}
+            />
             <CadenceTemplates
-                modal={modal}
-                setModal={setModal}
+                modal={cadenceModal}
+                setModal={setCadenceModal}
                 setArgData={setArgData}
             />
             <nav className="container header">

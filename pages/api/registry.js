@@ -19,7 +19,7 @@ const internalRegistry = {
         NonFungibleToken: "0x1d7e57aa55817448",
         MetadataViews: "0x1d7e57aa55817448",
         FungibleToken: "0xf233dcee88fe0abe",
-        FlowToken: "0x7e60df042a9c0868",
+        FlowToken: "0x1654653399040a61",
         NFTCatalog: "0x49a7cda3a1eecc29",
         NFTCatalogAdmin: "0x49a7cda3a1eecc29",
         NFTRetrieval: "0x49a7cda3a1eecc29",

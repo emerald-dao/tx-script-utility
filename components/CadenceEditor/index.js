@@ -22,7 +22,7 @@ const CadenceEditor = () => {
             }}
             value={code}
             onChange={setCode}
-            height={600}
+            height={800}
             language="cadence"
             options={{
                 minimap: {

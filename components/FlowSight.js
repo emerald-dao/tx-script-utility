@@ -46,7 +46,14 @@ const FlowSight = ({ modal, setModal, argData }) => {
                     ></a>
                     <h1>Flow Sight</h1>
                     <p>
-                        Flow Sight will simulate your transaction and return a
+                        <a
+                            href="https://github.com/Zay-Codes-Lab/flow-sight"
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            Flow Sight
+                        </a>{" "}
+                        will simulate your transaction and return a
                         human-readable explanation of what occured without
                         actually running the transaction.
                     </p>
@@ -65,7 +72,7 @@ const FlowSight = ({ modal, setModal, argData }) => {
                 </div>
                 <footer>
                     <button
-                        disable={loading}
+                        disabled={loading}
                         aria-busy={loading}
                         onClick={async () => await simulateTransaction()}
                     >

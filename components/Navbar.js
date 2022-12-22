@@ -14,11 +14,9 @@ import {
     FaUser,
     FaUserSlash,
     FaCode,
-    FaBook,
 } from "react-icons/fa";
 import { isMobile } from "react-device-detect";
 import CadenceTemplates from "./CadenceTemplates";
-import InteractionTemplates from "./InteractionTemplates";
 import FlowSight from "./FlowSight";
 
 const Navbar = ({ argData, setArgData }) => {
@@ -32,7 +30,6 @@ const Navbar = ({ argData, setArgData }) => {
         running,
     } = useCode();
     const { network, switchNetwork, user } = useFlow();
-    const [ixModal, setIxModal] = useState(false);
     const [cadenceModal, setCadenceModal] = useState(false);
     const [flowSightModal, setFlowSightModal] = useState(false);
     const { type, signers } = templateInfo;
@@ -56,15 +53,6 @@ const Navbar = ({ argData, setArgData }) => {
 
     const options = (
         <>
-            <li>
-                <a
-                    data-tooltip="Interaction Templates"
-                    onClick={() => setIxModal(!ixModal)}
-                >
-                    <FaBook />
-                    {isMobile && " Interaction Templates"}
-                </a>
-            </li>
             <li>
                 <a
                     data-tooltip="Cadence Templates"
@@ -131,7 +119,6 @@ const Navbar = ({ argData, setArgData }) => {
 
     return (
         <>
-            <InteractionTemplates modal={ixModal} setModal={setIxModal} />
             <CadenceTemplates
                 modal={cadenceModal}
                 setModal={setCadenceModal}

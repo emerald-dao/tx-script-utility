@@ -20,16 +20,7 @@ const MyApp = ({ Component, pageProps }) => {
                     </CodeProvider>
                 </FlowProvider>
             </main>
-            <footer className="container">
-                <p>
-                    Visit <a href="https://docs.onflow.org">docs.onflow.org</a>{" "}
-                    to learn more. <br />
-                    Forked from the{" "}
-                    <a href="https://github.com/emerald-dao/tx-script-utility/">
-                        Emerald DAO TX Script Utility
-                    </a>
-                </p>
-            </footer>
+            <footer className="container" />
         </div>
     );
 };

@@ -19,6 +19,7 @@
         "axios": "^0.27.2",
         "copy-webpack-plugin": "^10.2.4",
         "flow-catalog": "^0.1.1",
+        "flow-sight": "github:Zay-Codes-Lab/flow-sight",
         "monaco-editor": "^0.31.1",
         "monaco-editor-webpack-plugin": "^7.0.1",
         "monaco-languageclient": "^0.18.1",

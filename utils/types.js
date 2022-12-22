@@ -94,6 +94,19 @@ const checkJSON = (value, type) => {
     }
 };
 
+export const getOrderedArgValues = (args, finalArgs) => {
+    const argValues = [];
+    for (let arg of args.map((a) => splitArgs(a)[0])) {
+        let value = finalArgs[arg];
+        if (isJSON(value)) {
+            argValues.push(JSON.parse(value));
+        } else {
+            argValues.push(value);
+        }
+    }
+    return argValues;
+};
+
 export const validateByType = (value, type) => {
     if (!type) {
         return null;

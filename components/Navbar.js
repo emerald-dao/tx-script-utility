@@ -19,6 +19,7 @@ import {
 import { isMobile } from "react-device-detect";
 import CadenceTemplates from "./CadenceTemplates";
 import InteractionTemplates from "./InteractionTemplates";
+import FlowSight from "./FlowSight";
 
 const Navbar = ({ argData, setArgData }) => {
     const {
@@ -33,6 +34,7 @@ const Navbar = ({ argData, setArgData }) => {
     const { network, switchNetwork, user } = useFlow();
     const [ixModal, setIxModal] = useState(false);
     const [cadenceModal, setCadenceModal] = useState(false);
+    const [flowSightModal, setFlowSightModal] = useState(false);
     const { type, signers } = templateInfo;
 
     const getButtonLabel = () => {
@@ -129,15 +131,16 @@ const Navbar = ({ argData, setArgData }) => {
 
     return (
         <>
-            <InteractionTemplates
-                modal={ixModal}
-                setModal={setIxModal}
-                setArgData={setArgData}
-            />
+            <InteractionTemplates modal={ixModal} setModal={setIxModal} />
             <CadenceTemplates
                 modal={cadenceModal}
                 setModal={setCadenceModal}
                 setArgData={setArgData}
+            />
+            <FlowSight
+                modal={flowSightModal}
+                setModal={setFlowSightModal}
+                argData={argData}
             />
             <nav className="container header">
                 <ul>
@@ -203,6 +206,21 @@ const Navbar = ({ argData, setArgData }) => {
                     ) : (
                         options
                     )}
+                    <li>
+                        {type === "transaction" && (
+                            <button
+                                role="button"
+                                className="contrast"
+                                onClick={() =>
+                                    setFlowSightModal(!flowSightModal)
+                                }
+                                disabled={disabled}
+                                aria-busy={running}
+                            >
+                                Simulate
+                            </button>
+                        )}
+                    </li>
                     <li>
                         <button
                             role="button"

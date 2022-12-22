@@ -5,11 +5,10 @@ import {
     getTemplateInfo,
     replaceImportAddresses,
     sendTransaction,
-    splitArgs,
 } from "@onflow/flow-cadut";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { baseScript } from "../templates/code";
-import { isJSON } from "../utils/types";
+import { getOrderedArgValues } from "../utils/types";
 import { useFlow } from "./FlowContext";
 
 export const CodeContext = createContext({});
@@ -25,19 +24,6 @@ const CodeProvider = ({ children }) => {
     const [error, setError] = useState();
     const templateInfo = getTemplateInfo(code);
     const { type, args } = templateInfo;
-
-    const getOrderedArgValues = (finalArgs) => {
-        const argValues = [];
-        for (let arg of args.map((a) => splitArgs(a)[0])) {
-            let value = finalArgs[arg];
-            if (isJSON(value)) {
-                argValues.push(JSON.parse(value));
-            } else {
-                argValues.push(value);
-            }
-        }
-        return argValues;
-    };
 
     const updateImports = async () => {
         const env = await getEnvironment(network);
@@ -55,7 +41,7 @@ const CodeProvider = ({ children }) => {
         autoSaveCodeToSession();
         clearResults();
         setRunning(true);
-        const fclArgs = getOrderedArgValues(finalArgs);
+        const fclArgs = getOrderedArgValues(args, finalArgs);
         if (type === "script") {
             const [scriptResult, scriptError] = await executeScript({
                 code,

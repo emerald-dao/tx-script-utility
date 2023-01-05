@@ -33,12 +33,17 @@ const Navbar = ({ argData, setArgData }) => {
     const [cadenceModal, setCadenceModal] = useState(false);
     const [flowSightModal, setFlowSightModal] = useState(false);
     const { type, signers } = templateInfo;
+    const canSupportMultiSign =
+        user &&
+        user.services &&
+        user.services[0] &&
+        user.services[0].uid.startsWith("dapper");
 
     const getButtonLabel = () => {
         if (type === "contract") {
             return "Not Supported";
         }
-        if (signers > 1) {
+        if (signers > 1 && !canSupportMultiSign) {
             // TODO: Implement multisig
             return "Multisig is not Supported";
         }
@@ -49,7 +54,7 @@ const Navbar = ({ argData, setArgData }) => {
         type === "unknown" ||
         type === "contract" ||
         !editorReady ||
-        signers > 1;
+        (signers > 1 && !canSupportMultiSign);
 
     const options = (
         <>

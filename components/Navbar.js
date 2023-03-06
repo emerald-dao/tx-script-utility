@@ -94,8 +94,7 @@ const Navbar = ({ argData, setArgData }) => {
                     data-tooltip="Copy a link to this code"
                     onClick={() => {
                         copyToClipboard(
-                            `${
-                                window.location.origin
+                            `${window.location.origin
                             }?code=${encodeURIComponent(
                                 Buffer.from(code).toString("base64")
                             )}&network=${network}&args=${encodeURIComponent(
@@ -138,7 +137,7 @@ const Navbar = ({ argData, setArgData }) => {
                 <ul>
                     {!isMobile && (
                         <li>
-                            <h1>Flow Runner</h1>
+                            <h1>Playground</h1>
                         </li>
                     )}
                     <li>

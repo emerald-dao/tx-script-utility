@@ -1,6 +1,6 @@
 import { config } from "@onflow/fcl";
 
-const title = "Flow Runner";
+const title = "Playground";
 const testnetConfig = {
     "app.detail.title": title,
     "accessNode.api": "https://rest-testnet.onflow.org",

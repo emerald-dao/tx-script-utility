@@ -1,4 +1,4 @@
-# Better Playground
+# Run
 
 A way to send transactions and scripts on the Flow blockchain with Testnet, Mainnet, or Emulator.
 

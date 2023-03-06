@@ -137,7 +137,7 @@ const Navbar = ({ argData, setArgData }) => {
                 <ul>
                     {!isMobile && (
                         <li>
-                            <h1>Playground</h1>
+                            <h1>Run</h1>
                         </li>
                     )}
                     <li>

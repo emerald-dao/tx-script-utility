@@ -3,6 +3,7 @@ import { config } from "@onflow/fcl";
 const title = "Run";
 const testnetConfig = {
     "app.detail.title": title,
+    "app.detail.icon": "https://i.imgur.com/wUvZ1cK.png",
     "accessNode.api": "https://rest-testnet.onflow.org",
     "discovery.wallet": "https://fcl-discovery.onflow.org/testnet/authn",
     "discovery.authn.endpoint":

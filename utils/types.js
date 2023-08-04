@@ -32,8 +32,8 @@ const mapToSchema = (type) => {
             type.startsWith("Address") ||
             type.startsWith("Word") ||
             isComplexType(type): {
-            return { type: "string" };
-        }
+                return { type: "string" };
+            }
 
         // Integers
         case startsWith(type, "Int"): {
@@ -148,7 +148,7 @@ export const validateByType = (value, type) => {
 
         // Address
         case type.startsWith("Address"): {
-            if (!value.match(/(^0x[\w\d]{16})|(^0x[\w\d]{1,4})/)) {
+            if (value && !value.match(/(^0x[\w\d]{16})|(^0x[\w\d]{1,4})/)) {
                 return "Not a valid Address";
             }
             return null;
